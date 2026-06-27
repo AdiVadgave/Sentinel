@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { FileText, Download, Loader2 } from "lucide-react";
+import { FileText, Download, Loader2, Sparkles } from "lucide-react";
 import { useStore } from "../../store/store";
 import { Card, SectionHeader, Button, Dialog, Chip } from "../../components/ui/ui";
-import { kpis } from "../../mock/seed";
+import { api, type GeneratedReport } from "../../lib/api";
 
 const templates = [
   { id: "monthly", name: "Monthly HSE Summary", desc: "KPIs, trends, open actions" },
@@ -12,71 +12,79 @@ const templates = [
 
 export function Reports() {
   const [loading, setLoading] = useState<string | null>(null);
-  const [open, setOpen] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  const [report, setReport] = useState<GeneratedReport | null>(null);
   const pushToast = useStore((s) => s.pushToast);
 
-  const gen = (id: string) => {
+  const gen = async (id: string) => {
     setLoading(id);
-    setTimeout(() => {
-      setLoading(null);
-      setOpen(id);
-    }, 1400);
+    try {
+      const r = await api.report(id);
+      setReport(r);
+      setOpen(true);
+    } catch {
+      pushToast({ title: "Could not reach the reporting agent", detail: "Is the backend running on :8000?", variant: "error" });
+    }
+    setLoading(null);
   };
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <SectionHeader title="Reports" subtitle="Board-ready, branded exports" />
+      <SectionHeader title="Reports" subtitle="Board-ready, AI-generated HSE reports" />
       <div className="grid sm:grid-cols-3 gap-4">
         {templates.map((t) => (
           <Card key={t.id} className="p-5">
             <FileText size={26} className="text-brand" />
             <h3 className="mt-3 font-bold text-navy-900">{t.name}</h3>
             <p className="text-xs text-slate-500 mt-1">{t.desc}</p>
-            <Button className="mt-4 w-full" onClick={() => gen(t.id)} disabled={loading === t.id}>
-              {loading === t.id ? <><Loader2 size={15} className="animate-spin" /> Generating…</> : "Generate"}
+            <Button className="mt-4 w-full" onClick={() => gen(t.id)} disabled={!!loading}>
+              {loading === t.id ? (
+                <><Loader2 size={15} className="animate-spin" /> Generating…</>
+              ) : (
+                <><Sparkles size={14} /> Generate</>
+              )}
             </Button>
           </Card>
         ))}
       </div>
 
-      <Dialog open={!!open} onClose={() => setOpen(null)} title="Monthly HSE Summary · MR-2026-06" size="lg">
-        <div className="p-6">
-          <div className="rounded-xl border border-slate-300 bg-white p-6">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-              <div>
-                <p className="font-extrabold text-navy-900 text-lg">Monthly HSE Summary</p>
-                <p className="text-xs text-slate-500">Black Mountain · June 2026</p>
-              </div>
-              <Chip tone="slate">POPIA · Internal (C3)</Chip>
-            </div>
-            <div className="mt-4 grid grid-cols-4 gap-3 text-center">
-              {[
-                ["Incidents", kpis.incidentsMTD.value],
-                ["Near-miss ratio", kpis.nearMissRatio.value],
-                ["Overdue actions", kpis.overdueActions.value],
-                ["SOP currency", kpis.sopCurrency.value + "%"],
-              ].map(([l, v]) => (
-                <div key={l} className="rounded border border-slate-200 p-2">
-                  <p className="text-xl font-extrabold text-navy-900">{v}</p>
-                  <p className="text-[10px] text-slate-500">{l}</p>
+      <Dialog open={open} onClose={() => setOpen(false)} title={report ? `${report.title} · ${report.period}` : ""} size="lg">
+        {report && (
+          <div className="p-6">
+            <div className="rounded-xl border border-slate-300 bg-white p-6">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div>
+                  <p className="font-extrabold text-navy-900 text-lg">{report.title}</p>
+                  <p className="text-xs text-slate-500">Black Mountain · {report.period}</p>
                 </div>
-              ))}
+                <div className="flex items-center gap-2">
+                  {report.mode === "azure" && <Chip tone="blue"><Sparkles size={12} /> AI-generated</Chip>}
+                  <Chip tone="slate">POPIA · Internal (C3)</Chip>
+                </div>
+              </div>
+
+              <p className="mt-4 text-sm text-navy-800 leading-relaxed font-medium">{report.summary}</p>
+
+              <div className="mt-4 space-y-3">
+                {report.sections.map((s, i) => (
+                  <div key={i}>
+                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{s.heading}</p>
+                    <p className="text-sm text-navy-800 leading-relaxed mt-0.5">{s.body}</p>
+                  </div>
+                ))}
+              </div>
+
+              <p className="mt-6 text-[10px] text-slate-400 border-t border-slate-200 pt-2">
+                Zensar × Vedanta Zinc International · Generated by Sentinel reporting agent
+              </p>
             </div>
-            <p className="mt-4 text-sm text-navy-800 leading-relaxed">
-              Incidents down 18% MTD. A recurring dropped-object pattern at the Gamsberg crusher was
-              detected and addressed with systemic re-barricading controls. Predictive early-warning
-              flagged EX-204 for inspection. All guidance benchmarked against MHSA, ISO 45001 and ICMM.
-            </p>
-            <p className="mt-6 text-[10px] text-slate-400 border-t border-slate-200 pt-2">
-              Zensar × Vedanta Zinc International · Generated by Sentinel
-            </p>
+            <div className="mt-4 flex justify-end">
+              <Button onClick={() => { window.print(); pushToast({ title: "Report downloaded", variant: "success" }); }}>
+                <Download size={15} /> Download
+              </Button>
+            </div>
           </div>
-          <div className="mt-4 flex justify-end">
-            <Button onClick={() => { window.print(); pushToast({ title: "Report downloaded", variant: "success" }); }}>
-              <Download size={15} /> Download
-            </Button>
-          </div>
-        </div>
+        )}
       </Dialog>
     </div>
   );

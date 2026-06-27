@@ -3,7 +3,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import * as Icons from "lucide-react";
 import { useStore } from "../../store/store";
-import { navByRole, sharedNav } from "./nav";
+import { navByRole } from "./nav";
 import type { Role } from "../../mock/seed";
 import { agents, notifications as seedNotif } from "../../mock/seed";
 import { Chip } from "../ui/ui";
@@ -14,7 +14,7 @@ const Icon = ({ name, size = 18 }: { name: string; size?: number }) => {
   return <C size={size} />;
 };
 
-const roles: Role[] = ["Worker", "HSE Officer", "HSE Manager", "Executive", "Admin"];
+const roles: Role[] = ["Worker", "HSE Officer", "HSE Manager", "Admin"];
 
 export function Shell() {
   const role = useStore((s) => s.role);
@@ -55,12 +55,6 @@ function Sidebar() {
           {role}
         </p>
         {items.map((it) => (
-          <NavItemLink key={it.to} to={it.to} label={it.label} icon={it.icon} />
-        ))}
-        <p className="px-3 pt-4 py-1 text-[10px] uppercase tracking-wide text-blue-300/70 font-bold">
-          Platform
-        </p>
-        {sharedNav.map((it) => (
           <NavItemLink key={it.to} to={it.to} label={it.label} icon={it.icon} />
         ))}
       </nav>
@@ -122,7 +116,6 @@ function TopBar() {
     Worker: "/pow",
     "HSE Officer": "/console",
     "HSE Manager": "/analytics",
-    Executive: "/analytics",
     Admin: "/settings",
   };
 

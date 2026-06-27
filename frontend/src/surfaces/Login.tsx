@@ -9,8 +9,7 @@ import type { Role } from "../mock/seed";
 const personas: { role: Role; desc: string }[] = [
   { role: "Worker", desc: "Point-of-Work app · ask Sentinel, log pre-tasks, report" },
   { role: "HSE Officer", desc: "Console · investigate incidents, approvals, handover" },
-  { role: "HSE Manager", desc: "Analytics · intelligence, patterns, predictive" },
-  { role: "Executive", desc: "Oversight · KPIs, reports, roadmap" },
+  { role: "HSE Manager", desc: "Analytics · intelligence, patterns, predictive, reports" },
   { role: "Admin", desc: "Platform · agents, integrations, audit" },
 ];
 
@@ -18,7 +17,6 @@ const landingFor: Record<Role, string> = {
   Worker: "/pow",
   "HSE Officer": "/console",
   "HSE Manager": "/analytics",
-  Executive: "/analytics",
   Admin: "/settings",
 };
 

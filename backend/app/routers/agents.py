@@ -15,6 +15,7 @@ from ..prompts import (
     HANDOVER_SUMMARY_SYSTEM,
     ICAM_SYSTEM,
     REPORT_CLASSIFY_SYSTEM,
+    REPORT_SYSTEM,
     SUGGEST_CONTROLS_SYSTEM,
     SUPERVISOR_CLASSIFY,
     knowledge_system,
@@ -46,6 +47,11 @@ class SuggestRequest(BaseModel):
 
 
 class HandoverRequest(BaseModel):
+    context: str = ""
+
+
+class ReportRequestBody(BaseModel):
+    reportId: str = "monthly"
     context: str = ""
 
 
@@ -214,6 +220,23 @@ def suggest_controls(req: SuggestRequest) -> dict:
     """AI-suggested pre-task controls confirmation."""
     user = f"Task: {req.task or 'work at height'} | Hazards: {req.hazards or 'working at heights, dropped objects'}"
     return _json_agent(SUGGEST_CONTROLS_SYSTEM, user, lambda: fallback.suggest_controls(req.task, req.hazards))
+
+
+@router.post("/report")
+def report(req: ReportRequestBody) -> dict:
+    """Generate a board-ready HSE report (monthly | incident | compliance)."""
+    names = {"monthly": "Monthly HSE Summary", "incident": "Incident Pack", "compliance": "Compliance Status"}
+    rid = req.reportId if req.reportId in names else "monthly"
+    user = (
+        f"Report type: {names[rid]}.\n"
+        "Operational data: Incidents MTD 12 (down 18%); near-miss ratio 8.4:1; 5 overdue corrective "
+        "actions; SOP currency 92%; 37 point-of-work queries today. Recurring pattern: 4 dropped-object "
+        "near-misses at the Gamsberg crusher in 90 days (cause: barricading not re-established after "
+        "maintenance). Predictive: EX-204 hydraulic shovel flagged for inspection within 72h. "
+        "A revised national fall-protection standard flagged 3 SOPs for review. "
+        f"{req.context}"
+    )
+    return _json_agent(REPORT_SYSTEM, user, lambda: fallback.report_doc(rid), max_tokens=2500)
 
 
 @router.post("/handover-summary")

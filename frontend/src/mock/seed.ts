@@ -1,7 +1,7 @@
 // Sentinel PoC — seed "database" (mining-accurate, consistent IDs across screens).
 // Black Mountain Deeps · Swartberg · Gamsberg Concentrator (Northern Cape, ZA).
 
-export type Role = "Worker" | "HSE Officer" | "HSE Manager" | "Executive" | "Admin";
+export type Role = "Worker" | "HSE Officer" | "HSE Manager" | "Admin";
 export type WorkflowState = "Submitted" | "Under Review" | "Approved" | "Closed";
 
 export interface User {
@@ -18,7 +18,6 @@ export const users: User[] = [
   { id: "u-thabo", name: "Thabo Nkosi", role: "Worker", title: "Rigger · C-Shift", crew: "C-Shift", area: "Swartberg", initials: "TN" },
   { id: "u-lerato", name: "Lerato Mokoena", role: "HSE Officer", title: "HSE Officer", area: "Gamsberg", initials: "LM" },
   { id: "u-modau", name: "Dr Amukelani Modau", role: "HSE Manager", title: "Chief HSE & ESG Manager", initials: "AM" },
-  { id: "u-exec", name: "Johan Pretorius", role: "Executive", title: "General Manager", initials: "JP" },
   { id: "u-admin", name: "Sanele Dube", role: "Admin", title: "IT / Platform Admin", initials: "SD" },
 ];
 

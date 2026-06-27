@@ -115,6 +115,42 @@ def suggest_controls(task: str = "", hazards: str = "") -> dict:
     }
 
 
+def report_doc(report_id: str = "monthly") -> dict:
+    if report_id == "incident":
+        return {
+            "title": "Incident Pack", "period": "June 2026",
+            "summary": ("Three investigations closed this period, all ICAM-aligned and HSE-signed-off. "
+                        "The dominant theme remains dropped objects at the Gamsberg crusher."),
+            "sections": [
+                {"heading": "Open investigations", "body": "INC-2026-0204 (hand laceration) under review; NM-2026-0337 (dropped spanner) approved and pushed to Incident Intelligence."},
+                {"heading": "Causal themes", "body": "Barricading not re-established after maintenance is the leading causal factor (ICAM organisational factor). Tools not tethered at height is a recurring individual/team action."},
+                {"heading": "Corrective actions", "body": "CA-0912 (re-barricading verification in permit close-out) and CA-0913 (tethered-tool kits) are the priority preventive controls, per SOP-DOP-005 and ICMM Critical Control Management."},
+            ],
+        }
+    if report_id == "compliance":
+        return {
+            "title": "Compliance Status", "period": "June 2026",
+            "summary": ("SOP currency at 92%. A revised national fall-protection standard has flagged 3 SOPs for review. "
+                        "No statutory non-conformances outstanding under MHSA 1996."),
+            "sections": [
+                {"heading": "SOP currency", "body": "92% of SOPs current. SOP-ME-021 is review-due; SOP-WAH-014 flagged against the updated fall-protection standard."},
+                {"heading": "Standard alignment", "body": "Controls benchmarked against MHSA 1996, OHSA, ISO 45001 hierarchy of controls, and ICMM Critical Control Management."},
+                {"heading": "Actions", "body": "Schedule the 3 flagged SOP reviews; confirm critical-control verification frequency as a leading indicator."},
+            ],
+        }
+    return {
+        "title": "Monthly HSE Summary", "period": "June 2026",
+        "summary": ("Incidents down 18% MTD with a healthy 8.4:1 near-miss ratio. A recurring dropped-object pattern at "
+                    "the Gamsberg crusher was detected and addressed with systemic re-barricading controls."),
+        "sections": [
+            {"heading": "Performance", "body": "12 incidents MTD (down 18%), near-miss ratio 8.4:1, 5 overdue corrective actions, SOP currency 92%, 37 point-of-work queries handled today."},
+            {"heading": "Recurring patterns", "body": "Incident Intelligence flagged 4 dropped-object near-misses at the Gamsberg crusher in 90 days; common factor was barricading not re-established after maintenance."},
+            {"heading": "Predictive", "body": "EX-204 hydraulic shovel flagged for inspection within 72h from a rising pre-use-checklist anomaly trend (indicative model)."},
+            {"heading": "Standards", "body": "All guidance benchmarked against MHSA 1996, ISO 45001, and ICMM Critical Control Management, with a proactive, preventive emphasis."},
+        ],
+    }
+
+
 def handover_summary(context: str = "") -> dict:
     return {
         "summary": (

@@ -66,6 +66,13 @@ export interface HandoverSummary {
   summary: string;
   mode?: string;
 }
+export interface GeneratedReport {
+  title: string;
+  period: string;
+  summary: string;
+  sections: { heading: string; body: string }[];
+  mode?: string;
+}
 
 export const api = {
   health: () => fetch("/api/health").then((r) => r.json()),
@@ -78,6 +85,7 @@ export const api = {
     postJson<ControlsSuggestion>("/api/agents/suggest-controls", r),
   handoverSummary: (context?: string) =>
     postJson<HandoverSummary>("/api/agents/handover-summary", { context: context ?? "" }),
+  report: (reportId: string) => postJson<GeneratedReport>("/api/agents/report", { reportId }),
   sops: () => fetch("/api/agents/sops").then((r) => r.json()),
 };
 

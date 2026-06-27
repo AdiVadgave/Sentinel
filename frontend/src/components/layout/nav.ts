@@ -27,26 +27,12 @@ export const navByRole: Record<Role, NavItem[]> = {
     { to: "/analytics/patterns", label: "Recurring Patterns", icon: "Activity" },
     { to: "/analytics/predictive", label: "Predictive", icon: "Gauge" },
     { to: "/analytics/reports", label: "Reports", icon: "FileText" },
-    { to: "/console", label: "Console", icon: "LayoutDashboard" },
-  ],
-  Executive: [
-    { to: "/analytics", label: "Safety Intelligence", icon: "BarChart3" },
-    { to: "/analytics/patterns", label: "Recurring Patterns", icon: "Activity" },
-    { to: "/analytics/reports", label: "Reports", icon: "FileText" },
-    { to: "/architecture", label: "Architecture & Roadmap", icon: "Network" },
   ],
   Admin: [
     { to: "/settings", label: "Settings / Admin", icon: "Settings" },
     { to: "/integrations", label: "Integrations", icon: "Plug" },
     { to: "/audit", label: "Audit Log", icon: "ScrollText" },
-    { to: "/architecture", label: "Architecture", icon: "Network" },
   ],
 };
 
-// Shared items everyone can reach.
-export const sharedNav: NavItem[] = [
-  { to: "/integrations", label: "Integrations", icon: "Plug" },
-  { to: "/audit", label: "Audit Log", icon: "ScrollText" },
-  { to: "/architecture", label: "Architecture", icon: "Network" },
-  { to: "/settings", label: "Settings", icon: "Settings" },
-];
+// Platform / shared screens now live only under the Admin persona (navByRole.Admin).
