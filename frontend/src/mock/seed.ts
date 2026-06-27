@@ -15,10 +15,10 @@ export interface User {
 }
 
 export const users: User[] = [
-  { id: "u-thabo", name: "Thabo Nkosi", role: "Worker", title: "Rigger · C-Shift", crew: "C-Shift", area: "Swartberg", initials: "TN" },
-  { id: "u-lerato", name: "Lerato Mokoena", role: "HSE Officer", title: "HSE Officer", area: "Gamsberg", initials: "LM" },
-  { id: "u-modau", name: "Dr Amukelani Modau", role: "HSE Manager", title: "Chief HSE & ESG Manager", initials: "AM" },
-  { id: "u-admin", name: "Sanele Dube", role: "Admin", title: "IT / Platform Admin", initials: "SD" },
+  { id: "u-thabo", name: "Arjun Sharma", role: "Worker", title: "Rigger · C-Shift", crew: "C-Shift", area: "Swartberg", initials: "AS" },
+  { id: "u-lerato", name: "Lakshmi Menon", role: "HSE Officer", title: "HSE Officer", area: "Gamsberg", initials: "LM" },
+  { id: "u-modau", name: "Dr Aarti Mehta", role: "HSE Manager", title: "Chief HSE & ESG Manager", initials: "AM" },
+  { id: "u-admin", name: "Sandeep Deshpande", role: "Admin", title: "IT / Platform Admin", initials: "SD" },
 ];
 
 export const areas = ["Black Mountain Deeps", "Swartberg", "Gamsberg Concentrator", "Surface Workshops"];
@@ -48,12 +48,12 @@ export interface Sop {
   status: "Current" | "Review due" | "Standard changed";
 }
 export const sops: Sop[] = [
-  { id: "SOP-WAH-014", title: "Working at Heights", type: "SOP", version: "v3.2", owner: "Dr A. Modau", approved: "12 Apr 2026", status: "Standard changed" },
-  { id: "SOP-LOTO-007", title: "Lockout / Tagout — Energy Isolation", type: "SOP", version: "v4.0", owner: "S. Khumalo", approved: "28 Feb 2026", status: "Current" },
-  { id: "SOP-CS-009", title: "Confined Space Entry", type: "SOP", version: "v2.3", owner: "P. van Wyk", approved: "15 Mar 2026", status: "Current" },
-  { id: "SOP-ME-021", title: "Mobile Equipment Operation", type: "SOP", version: "v1.8", owner: "S. Khumalo", approved: "11 Jan 2026", status: "Review due" },
-  { id: "SOP-DOP-005", title: "Dropped-Object Prevention", type: "SOP", version: "v2.0", owner: "L. Mokoena", approved: "05 May 2026", status: "Current" },
-  { id: "SOP-INV-002", title: "ICAM Incident Investigation", type: "SOP", version: "v2.1", owner: "Dr A. Modau", approved: "20 Feb 2026", status: "Current" },
+  { id: "SOP-WAH-014", title: "Working at Heights", type: "SOP", version: "v3.2", owner: "Dr A. Mehta", approved: "12 Apr 2026", status: "Standard changed" },
+  { id: "SOP-LOTO-007", title: "Lockout / Tagout — Energy Isolation", type: "SOP", version: "v4.0", owner: "S. Kapoor", approved: "28 Feb 2026", status: "Current" },
+  { id: "SOP-CS-009", title: "Confined Space Entry", type: "SOP", version: "v2.3", owner: "P. Verma", approved: "15 Mar 2026", status: "Current" },
+  { id: "SOP-ME-021", title: "Mobile Equipment Operation", type: "SOP", version: "v1.8", owner: "S. Kapoor", approved: "11 Jan 2026", status: "Review due" },
+  { id: "SOP-DOP-005", title: "Dropped-Object Prevention", type: "SOP", version: "v2.0", owner: "L. Menon", approved: "05 May 2026", status: "Current" },
+  { id: "SOP-INV-002", title: "ICAM Incident Investigation", type: "SOP", version: "v2.1", owner: "Dr A. Mehta", approved: "20 Feb 2026", status: "Current" },
   { id: "STD-MHSA-1996", title: "Mine Health & Safety Act 29 of 1996", type: "Standard", version: "2024 rev", owner: "DMRE", approved: "Statutory", status: "Standard changed" },
   { id: "STD-ISO-45001", title: "ISO 45001 OH&S Management Systems", type: "Standard", version: "2018", owner: "ISO", approved: "01 Mar 2018", status: "Current" },
 ];
@@ -73,12 +73,12 @@ export interface WorkItem {
 }
 
 export const workItems: WorkItem[] = [
-  { id: "NM-2026-0337", type: "Near-Miss", title: "Dropped spanner near crusher walkway", area: "Gamsberg Concentrator", reportedBy: "Thabo Nkosi", status: "Submitted", agent: "incident-investigation", ageHrs: 3, severity: "High", description: "Spanner fell ~6m from elevated walkway after maintenance; barricading not re-established." },
-  { id: "NM-2026-0331", type: "Near-Miss", title: "Tool dropped from conveyor gantry", area: "Gamsberg Concentrator", reportedBy: "S. Khumalo", status: "Closed", agent: "incident-investigation", ageHrs: 280, severity: "Medium" },
-  { id: "INC-2026-0204", type: "Incident", title: "Hand laceration during belt change", area: "Gamsberg Concentrator", reportedBy: "L. Mokoena", status: "Under Review", agent: "incident-investigation", ageHrs: 52, severity: "Medium", aiDrafted: true },
-  { id: "NM-2026-0318", type: "Near-Miss", title: "Mobile equipment proximity — pedestrian", area: "Swartberg", reportedBy: "P. van Wyk", status: "Approved", agent: "incident-investigation", ageHrs: 120, severity: "High" },
-  { id: "HAZ-2026-0090", type: "Hazard", title: "Inadequate lighting at decline portal", area: "Black Mountain Deeps", reportedBy: "Thabo Nkosi", status: "Submitted", agent: "knowledge-risk", ageHrs: 8, severity: "Low" },
-  { id: "CA-0912", type: "Corrective Action", title: "Add re-barricading check to permit close-out", area: "Gamsberg Concentrator", reportedBy: "L. Mokoena", status: "Under Review", agent: "incident-intelligence", ageHrs: 20, aiDrafted: true },
+  { id: "NM-2026-0337", type: "Near-Miss", title: "Dropped spanner near crusher walkway", area: "Gamsberg Concentrator", reportedBy: "Arjun Sharma", status: "Submitted", agent: "incident-investigation", ageHrs: 3, severity: "High", description: "Spanner fell ~6m from elevated walkway after maintenance; barricading not re-established." },
+  { id: "NM-2026-0331", type: "Near-Miss", title: "Tool dropped from conveyor gantry", area: "Gamsberg Concentrator", reportedBy: "S. Kapoor", status: "Closed", agent: "incident-investigation", ageHrs: 280, severity: "Medium" },
+  { id: "INC-2026-0204", type: "Incident", title: "Hand laceration during belt change", area: "Gamsberg Concentrator", reportedBy: "L. Menon", status: "Under Review", agent: "incident-investigation", ageHrs: 52, severity: "Medium", aiDrafted: true },
+  { id: "NM-2026-0318", type: "Near-Miss", title: "Mobile equipment proximity — pedestrian", area: "Swartberg", reportedBy: "P. Verma", status: "Approved", agent: "incident-investigation", ageHrs: 120, severity: "High" },
+  { id: "HAZ-2026-0090", type: "Hazard", title: "Inadequate lighting at decline portal", area: "Black Mountain Deeps", reportedBy: "Arjun Sharma", status: "Submitted", agent: "knowledge-risk", ageHrs: 8, severity: "Low" },
+  { id: "CA-0912", type: "Corrective Action", title: "Add re-barricading check to permit close-out", area: "Gamsberg Concentrator", reportedBy: "L. Menon", status: "Under Review", agent: "incident-intelligence", ageHrs: 20, aiDrafted: true },
 ];
 
 export interface CorrectiveAction {
@@ -90,11 +90,11 @@ export interface CorrectiveAction {
   status: WorkflowState;
 }
 export const correctiveActions: CorrectiveAction[] = [
-  { id: "CA-0912", action: "Add mandatory re-barricading verification to permit close-out", owner: "L. Mokoena", due: "11 Jul 2026", priority: "High", status: "Under Review" },
-  { id: "CA-0913", action: "Issue tethered-tool kits to crusher maintenance crews", owner: "S. Khumalo", due: "18 Jul 2026", priority: "High", status: "Submitted" },
-  { id: "CA-0908", action: "Re-train C-Shift on dropped-object prevention", owner: "P. van Wyk", due: "04 Jul 2026", priority: "Medium", status: "Approved" },
-  { id: "CA-0901", action: "Install proximity-detection on EX-204 haul route", owner: "S. Dube", due: "29 Jun 2026", priority: "High", status: "Closed" },
-  { id: "CA-0915", action: "Review lighting standard at decline portals", owner: "L. Mokoena", due: "22 Jul 2026", priority: "Low", status: "Submitted" },
+  { id: "CA-0912", action: "Add mandatory re-barricading verification to permit close-out", owner: "L. Menon", due: "11 Jul 2026", priority: "High", status: "Under Review" },
+  { id: "CA-0913", action: "Issue tethered-tool kits to crusher maintenance crews", owner: "S. Kapoor", due: "18 Jul 2026", priority: "High", status: "Submitted" },
+  { id: "CA-0908", action: "Re-train C-Shift on dropped-object prevention", owner: "P. Verma", due: "04 Jul 2026", priority: "Medium", status: "Approved" },
+  { id: "CA-0901", action: "Install proximity-detection on EX-204 haul route", owner: "S. Deshpande", due: "29 Jun 2026", priority: "High", status: "Closed" },
+  { id: "CA-0915", action: "Review lighting standard at decline portals", owner: "L. Menon", due: "22 Jul 2026", priority: "Low", status: "Submitted" },
 ];
 
 export const kpis = {
@@ -247,8 +247,8 @@ export interface AuditEntry {
   outcome: string;
 }
 export const auditLog: AuditEntry[] = [
-  { id: "A-1001", ts: "27 Jun 2026 08:14", user: "Thabo Nkosi", agent: "Knowledge & Risk", action: "Asked: working at heights @ Swartberg", source: "SOP-WAH-014 v3.2", popia: "Internal (C3)", outcome: "Answered + cited" },
-  { id: "A-1002", ts: "27 Jun 2026 08:31", user: "Lerato Mokoena", agent: "Incident Investigation", action: "ICAM draft generated for NM-2026-0337", source: "SOP-INV-002 v2.1", popia: "Internal (C3)", outcome: "Draft pending sign-off" },
+  { id: "A-1001", ts: "27 Jun 2026 08:14", user: "Arjun Sharma", agent: "Knowledge & Risk", action: "Asked: working at heights @ Swartberg", source: "SOP-WAH-014 v3.2", popia: "Internal (C3)", outcome: "Answered + cited" },
+  { id: "A-1002", ts: "27 Jun 2026 08:31", user: "Lakshmi Menon", agent: "Incident Investigation", action: "ICAM draft generated for NM-2026-0337", source: "SOP-INV-002 v2.1", popia: "Internal (C3)", outcome: "Draft pending sign-off" },
 ];
 
 export interface Notification {

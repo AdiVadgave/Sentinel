@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from . import store
 from .config import get_settings
-from .routers import admin, agents
+from .routers import admin, agents, workflow
 
 settings = get_settings()
 
@@ -31,6 +31,7 @@ app.add_middleware(
 
 app.include_router(agents.router)
 app.include_router(admin.router)
+app.include_router(workflow.router)
 
 
 @app.get("/api/health")

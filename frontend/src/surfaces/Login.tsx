@@ -22,7 +22,7 @@ const landingFor: Record<Role, string> = {
 
 export function Login() {
   const [stage, setStage] = useState<"login" | "auth" | "persona">("login");
-  const [email, setEmail] = useState("a.modau@vedanta.co.za");
+  const [email, setEmail] = useState("a.mehta@vedanta.co.za");
   const [error, setError] = useState("");
   const signIn = useStore((s) => s.signIn);
   const setPersona = useStore((s) => s.setPersona);

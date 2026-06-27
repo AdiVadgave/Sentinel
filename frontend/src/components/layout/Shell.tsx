@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import * as Icons from "lucide-react";
@@ -18,8 +18,17 @@ const roles: Role[] = ["Worker", "HSE Officer", "HSE Manager", "Admin"];
 export function Shell() {
   const role = useStore((s) => s.role);
   const user = useStore((s) => s.user);
+  const loadWork = useStore((s) => s.loadWork);
+  const loadActions = useStore((s) => s.loadActions);
+
+  // Hydrate the shared work queue + actions from the backend (source of truth)
+  // once per session, so every surface sees the same persisted state.
+  useEffect(() => {
+    loadWork();
+    loadActions();
+  }, [loadWork, loadActions]);
+
   if (!role || !user) return null;
-  const items = navByRole[role];
 
   return (
     <div className="flex h-screen overflow-hidden">

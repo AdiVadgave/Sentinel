@@ -97,6 +97,74 @@ export const api = {
   lesson: (p: { area: string; hazard: string; count: number; window: string; related: string[] }) =>
     postJson<GeneratedLesson>("/api/agents/lesson", p),
   sops: () => fetch("/api/agents/sops").then((r) => r.json()),
+  knowledge: () => fetch("/api/agents/knowledge").then((r) => r.json() as Promise<KnowledgeDoc[]>),
+};
+
+// --- Knowledge Base corpus (served from the backend grounding corpus) ------ //
+
+export interface KnowledgeDoc {
+  id: string;
+  title: string;
+  type: "SOP" | "Standard";
+  version: string;
+  owner: string;
+  approved: string;
+  status: "Current" | "Review due" | "Standard changed";
+  source: string;
+  body: string;
+  critical_controls: string[];
+  history: { version: string; date: string; note: string }[];
+}
+
+// --- Work queue + corrective actions (persisted, cross-surface) ------------ //
+
+export interface WorkItemDTO {
+  id: string;
+  type: string;
+  title: string;
+  area: string;
+  reportedBy: string;
+  status: string;
+  agent: string;
+  ageHrs: number;
+  severity?: string;
+  aiDrafted?: boolean;
+  description?: string;
+}
+export interface CorrectiveActionDTO {
+  id: string;
+  action: string;
+  owner: string;
+  due: string;
+  priority: string;
+  status: string;
+}
+
+export const workflow = {
+  listWork: () => fetch("/api/work").then((r) => r.json() as Promise<WorkItemDTO[]>),
+  addWork: (item: WorkItemDTO) => send<WorkItemDTO>("/api/work", "POST", item),
+  transitionWork: (id: string, status: string) =>
+    send<WorkItemDTO>(`/api/work/${id}`, "PATCH", { status }),
+  listActions: () => fetch("/api/actions").then((r) => r.json() as Promise<CorrectiveActionDTO[]>),
+  addAction: (item: CorrectiveActionDTO) => send<CorrectiveActionDTO>("/api/actions", "POST", item),
+};
+
+// --- Analytics KPIs (computed server-side from the stored work queue) ------ //
+
+export interface Kpis {
+  incidentsMTD: { value: number; delta: number };
+  nearMissRatio: { value: string; delta: number };
+  overdueActions: { value: number; delta: number };
+  sopCurrency: { value: number; delta: number };
+  powQueriesToday: { value: number; delta: number };
+  incidentTrend: { month: string; incidents: number; nearMiss: number }[];
+  byCategory: { category: string; count: number }[];
+  agentActivity: { month: string; knowledge: number; investigation: number; intelligence: number; handover: number }[];
+  computed?: boolean;
+}
+
+export const analytics = {
+  kpis: () => fetch("/api/analytics/kpis").then((r) => r.json() as Promise<Kpis>),
 };
 
 // --- Admin platform (real, JSON-persisted backend state) ------------------- //

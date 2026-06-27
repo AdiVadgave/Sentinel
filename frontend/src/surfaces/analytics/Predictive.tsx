@@ -17,7 +17,7 @@ export function Predictive() {
 
   const raise = () => {
     const id = nextId("CA");
-    addAction({ id, action: `Inspect ${selected.name} — predictive early-warning`, owner: "S. Khumalo", due: "within 72h", priority: "High", status: "Submitted" });
+    addAction({ id, action: `Inspect ${selected.name} — predictive early-warning`, owner: "S. Kapoor", due: "within 72h", priority: "High", status: "Submitted" });
     addWork({ id, type: "Corrective Action", title: `Inspect ${selected.id} (predictive alert)`, area: selected.area, reportedBy: user.name, status: "Submitted", agent: "incident-intelligence", ageHrs: 0, aiDrafted: true });
     pushToast({ title: "Maintenance action raised", detail: `${id} added to workflow`, variant: "success" });
   };

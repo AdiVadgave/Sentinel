@@ -212,11 +212,11 @@ def icam_draft(incident: dict) -> dict:
         ],
         "corrective_actions": [
             {"action": "Add mandatory re-barricading verification to permit close-out.",
-             "owner": "L. Mokoena", "due": "11 Jul 2026", "priority": "High"},
+             "owner": "L. Menon", "due": "11 Jul 2026", "priority": "High"},
             {"action": "Issue tethered-tool kits to all crusher maintenance crews.",
-             "owner": "S. Khumalo", "due": "18 Jul 2026", "priority": "High"},
+             "owner": "S. Kapoor", "due": "18 Jul 2026", "priority": "High"},
             {"action": "Toolbox talk on dropped-object prevention at " + area + ".",
-             "owner": "P. van Wyk", "due": "04 Jul 2026", "priority": "Medium"},
+             "owner": "P. Verma", "due": "04 Jul 2026", "priority": "Medium"},
         ],
         "alignment": "Aligned to ICAM SOP-INV-002 v2.1",
     }

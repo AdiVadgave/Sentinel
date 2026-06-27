@@ -16,7 +16,7 @@ import {
   type WorkItem,
 } from "../mock/seed";
 import { nowStamp } from "../lib/util";
-import { admin } from "../lib/api";
+import { admin, workflow } from "../lib/api";
 
 export interface Toast {
   id: string;
@@ -36,13 +36,15 @@ interface SentinelState {
   signOut: () => void;
   setPersona: (role: Role) => void;
 
-  // workflow items (shared across surfaces — the "one system" effect)
+  // workflow items (shared across surfaces, persisted to the backend store)
   work: WorkItem[];
   addWork: (item: WorkItem) => void;
   transition: (id: string, to: WorkflowState, by: string) => void;
+  loadWork: () => Promise<void>;
 
   actions: CorrectiveAction[];
   addAction: (a: CorrectiveAction) => void;
+  loadActions: () => Promise<void>;
 
   lessons: typeof seedLessons;
   publishLesson: (id: string) => void;
@@ -74,13 +76,16 @@ export const useStore = create<SentinelState>()(
       setPersona: (role) => set({ role, user: personaUser(role) }),
 
       work: seedWork,
-      addWork: (item) =>
-        set((s) => ({ work: [item, ...s.work] })),
+      addWork: (item) => {
+        set((s) => ({ work: [item, ...s.work] })); // optimistic
+        workflow.addWork(item).catch(() => {/* backend offline — keep local */});
+      },
       transition: (id, to, by) => {
         const item = get().work.find((w) => w.id === id);
         set((s) => ({
           work: s.work.map((w) => (w.id === id ? { ...w, status: to } : w)),
         }));
+        workflow.transitionWork(id, to).catch(() => {/* backend offline — keep local */});
         if (item) {
           get().logAudit({
             user: by,
@@ -92,9 +97,28 @@ export const useStore = create<SentinelState>()(
           });
         }
       },
+      loadWork: async () => {
+        try {
+          const rows = await workflow.listWork();
+          if (Array.isArray(rows)) set({ work: rows as WorkItem[] });
+        } catch {
+          /* backend unreachable — keep local/seed work queue */
+        }
+      },
 
       actions: seedActions,
-      addAction: (a) => set((s) => ({ actions: [a, ...s.actions] })),
+      addAction: (a) => {
+        set((s) => ({ actions: [a, ...s.actions] })); // optimistic
+        workflow.addAction(a).catch(() => {/* backend offline — keep local */});
+      },
+      loadActions: async () => {
+        try {
+          const rows = await workflow.listActions();
+          if (Array.isArray(rows)) set({ actions: rows as CorrectiveAction[] });
+        } catch {
+          /* backend unreachable — keep local/seed actions */
+        }
+      },
 
       lessons: seedLessons,
       publishLesson: (id) =>

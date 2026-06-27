@@ -37,10 +37,10 @@ def _seed() -> dict:
         ],
         "settings": {"confidence_threshold": DEFAULT_THRESHOLD},
         "users": [
-            {"id": "u-thabo", "name": "Thabo Nkosi", "role": "Worker", "title": "Rigger · C-Shift", "area": "Swartberg", "initials": "TN"},
-            {"id": "u-lerato", "name": "Lerato Mokoena", "role": "HSE Officer", "title": "HSE Officer", "area": "Gamsberg", "initials": "LM"},
-            {"id": "u-modau", "name": "Dr Amukelani Modau", "role": "HSE Manager", "title": "Chief HSE & ESG Manager", "area": "", "initials": "AM"},
-            {"id": "u-admin", "name": "Sanele Dube", "role": "Admin", "title": "IT / Platform Admin", "area": "", "initials": "SD"},
+            {"id": "u-thabo", "name": "Arjun Sharma", "role": "Worker", "title": "Rigger · C-Shift", "area": "Swartberg", "initials": "AS"},
+            {"id": "u-lerato", "name": "Lakshmi Menon", "role": "HSE Officer", "title": "HSE Officer", "area": "Gamsberg", "initials": "LM"},
+            {"id": "u-modau", "name": "Dr Aarti Mehta", "role": "HSE Manager", "title": "Chief HSE & ESG Manager", "area": "", "initials": "AM"},
+            {"id": "u-admin", "name": "Sandeep Deshpande", "role": "Admin", "title": "IT / Platform Admin", "area": "", "initials": "SD"},
         ],
         "integrations": [
             {"id": "enablon", "name": "Enablon (Incidents / ICAM)", "connected": True, "lastSync": "2 min ago", "records": 1284},
@@ -49,8 +49,23 @@ def _seed() -> dict:
             {"id": "entra", "name": "Microsoft Entra ID (SSO)", "connected": True, "lastSync": "just now", "records": 40},
         ],
         "audit": [
-            {"id": "A-1001", "seq": 1001, "ts": "27 Jun 2026 08:14", "user": "Thabo Nkosi", "agent": "Knowledge & Risk", "action": "Asked: working at heights @ Swartberg", "source": "SOP-WAH-014 v3.2", "popia": "Internal (C3)", "outcome": "Answered + cited"},
-            {"id": "A-1002", "seq": 1002, "ts": "27 Jun 2026 08:31", "user": "Lerato Mokoena", "agent": "Incident Investigation", "action": "ICAM draft generated for NM-2026-0337", "source": "SOP-INV-002 v2.1", "popia": "Internal (C3)", "outcome": "Draft pending sign-off"},
+            {"id": "A-1001", "seq": 1001, "ts": "27 Jun 2026 08:14", "user": "Arjun Sharma", "agent": "Knowledge & Risk", "action": "Asked: working at heights @ Swartberg", "source": "SOP-WAH-014 v3.2", "popia": "Internal (C3)", "outcome": "Answered + cited"},
+            {"id": "A-1002", "seq": 1002, "ts": "27 Jun 2026 08:31", "user": "Lakshmi Menon", "agent": "Incident Investigation", "action": "ICAM draft generated for NM-2026-0337", "source": "SOP-INV-002 v2.1", "popia": "Internal (C3)", "outcome": "Draft pending sign-off"},
+        ],
+        "work": [
+            {"id": "NM-2026-0337", "type": "Near-Miss", "title": "Dropped spanner near crusher walkway", "area": "Gamsberg Concentrator", "reportedBy": "Arjun Sharma", "status": "Submitted", "agent": "incident-investigation", "ageHrs": 3, "severity": "High", "description": "Spanner fell ~6m from elevated walkway after maintenance; barricading not re-established."},
+            {"id": "NM-2026-0331", "type": "Near-Miss", "title": "Tool dropped from conveyor gantry", "area": "Gamsberg Concentrator", "reportedBy": "S. Kapoor", "status": "Closed", "agent": "incident-investigation", "ageHrs": 280, "severity": "Medium"},
+            {"id": "INC-2026-0204", "type": "Incident", "title": "Hand laceration during belt change", "area": "Gamsberg Concentrator", "reportedBy": "L. Menon", "status": "Under Review", "agent": "incident-investigation", "ageHrs": 52, "severity": "Medium", "aiDrafted": True},
+            {"id": "NM-2026-0318", "type": "Near-Miss", "title": "Mobile equipment proximity — pedestrian", "area": "Swartberg", "reportedBy": "P. Verma", "status": "Approved", "agent": "incident-investigation", "ageHrs": 120, "severity": "High"},
+            {"id": "HAZ-2026-0090", "type": "Hazard", "title": "Inadequate lighting at decline portal", "area": "Black Mountain Deeps", "reportedBy": "Arjun Sharma", "status": "Submitted", "agent": "knowledge-risk", "ageHrs": 8, "severity": "Low"},
+            {"id": "CA-0912", "type": "Corrective Action", "title": "Add re-barricading check to permit close-out", "area": "Gamsberg Concentrator", "reportedBy": "L. Menon", "status": "Under Review", "agent": "incident-intelligence", "ageHrs": 20, "aiDrafted": True},
+        ],
+        "actions": [
+            {"id": "CA-0912", "action": "Add mandatory re-barricading verification to permit close-out", "owner": "L. Menon", "due": "11 Jul 2026", "priority": "High", "status": "Under Review"},
+            {"id": "CA-0913", "action": "Issue tethered-tool kits to crusher maintenance crews", "owner": "S. Kapoor", "due": "18 Jul 2026", "priority": "High", "status": "Submitted"},
+            {"id": "CA-0908", "action": "Re-train C-Shift on dropped-object prevention", "owner": "P. Verma", "due": "04 Jul 2026", "priority": "Medium", "status": "Approved"},
+            {"id": "CA-0901", "action": "Install proximity-detection on EX-204 haul route", "owner": "S. Deshpande", "due": "29 Jun 2026", "priority": "High", "status": "Closed"},
+            {"id": "CA-0915", "action": "Review lighting standard at decline portals", "owner": "L. Menon", "due": "22 Jul 2026", "priority": "Low", "status": "Submitted"},
         ],
     }
 
@@ -239,3 +254,47 @@ def add_audit(
         data["audit"].append(entry)
         _save(data)
     return {k: v for k, v in entry.items() if k != "seq"}
+
+
+# --------------------------------------------------------------------------- #
+# Work queue (incidents, near-misses, pre-tasks, investigations, actions)     #
+# --------------------------------------------------------------------------- #
+
+def list_work() -> list[dict]:
+    return _load()["work"]
+
+
+def add_work(item: dict) -> dict:
+    with _lock:
+        data = _load()
+        # De-dupe by id (an optimistic client insert may re-POST the same id).
+        if not any(w["id"] == item.get("id") for w in data["work"]):
+            data["work"].insert(0, item)
+            _save(data)
+    return item
+
+
+def transition_work(work_id: str, status: str) -> dict | None:
+    with _lock:
+        data = _load()
+        target = None
+        for w in data["work"]:
+            if w["id"] == work_id:
+                w["status"] = status
+                target = dict(w)
+        if target:
+            _save(data)
+    return target
+
+
+def list_actions() -> list[dict]:
+    return _load()["actions"]
+
+
+def add_action(item: dict) -> dict:
+    with _lock:
+        data = _load()
+        if not any(a["id"] == item.get("id") for a in data["actions"]):
+            data["actions"].insert(0, item)
+            _save(data)
+    return item

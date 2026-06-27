@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 import time
 
 from fastapi import APIRouter
@@ -10,7 +11,7 @@ from pydantic import BaseModel
 
 from .. import azure_client, fallback, store
 from ..config import get_settings
-from ..knowledge import SOPS, SOPS_BY_ID
+from ..knowledge import SOPS, SOPS_BY_ID, knowledge_docs
 from ..prompts import (
     HANDOVER_SUMMARY_SYSTEM,
     ICAM_SYSTEM,
@@ -141,6 +142,12 @@ def list_sops() -> list[dict]:
     return SOPS
 
 
+@router.get("/knowledge")
+def list_knowledge() -> list[dict]:
+    """Unified SOPs + standards for the Knowledge Base screen (with version history)."""
+    return knowledge_docs()
+
+
 @router.get("/sops/{sop_id}")
 def get_sop(sop_id: str) -> dict:
     return SOPS_BY_ID.get(sop_id, {})
@@ -170,6 +177,21 @@ def ask(req: AskRequest) -> dict:
     answer = fallback.knowledge_answer(req.message)
     answer["mode"] = "offline"
     return answer
+
+
+def _source_from_text(text: str, message: str) -> dict:
+    """Build the source chip from the SOP the model ACTUALLY cited in its answer.
+
+    Scans the streamed text for a known SOP id and returns that SOP's authoritative
+    version/approval metadata. Falls back to the heuristic picker only if the model
+    didn't name a SOP we recognise — so the citation reflects the model, not a guess.
+    """
+    for match in re.findall(r"SOP-[A-Z]{2,5}-\d{3}", text):
+        sop = SOPS_BY_ID.get(match)
+        if sop:
+            return {"id": sop["id"], "title": sop["title"],
+                    "version": sop["version"], "approved": sop["approved"]}
+    return fallback.knowledge_answer(message)["source"]
 
 
 @router.post("/ask/stream")
@@ -207,13 +229,15 @@ def ask_stream(req: AskRequest) -> StreamingResponse:
                             "list, then a 'STANDARDS' line naming the applicable SA/international standards, "
                             "then a 'Source:' line with the SOP id/title/version/approval, then the "
                             "guardrail sentence.")
+                full: list[str] = []
                 for delta in azure_client.stream_chat([
                     {"role": "system", "content": system},
                     {"role": "user", "content": req.message},
                 ]):
+                    full.append(delta)
                     yield event({"type": "token", "text": delta})
-                # Attach a structured source chip alongside the streamed text.
-                src = fallback.knowledge_answer(req.message)["source"]
+                # Cite the SOP the model actually referenced in its answer.
+                src = _source_from_text("".join(full), req.message)
                 yield event({"type": "source", "source": src})
                 yield event({"type": "done", "mode": "azure"})
                 return

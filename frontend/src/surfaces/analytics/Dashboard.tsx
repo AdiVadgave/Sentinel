@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, SectionHeader } from "../../components/ui/ui";
 import {
@@ -8,12 +9,23 @@ import {
   StackedAgentArea,
   Heatmap,
 } from "../../components/charts/Charts";
-import { kpis, hazardTypes, patternMatrix, areas } from "../../mock/seed";
+import { kpis as seedKpis, hazardTypes, patternMatrix, areas } from "../../mock/seed";
+import { analytics, type Kpis } from "../../lib/api";
 import { useStore } from "../../store/store";
 
 export function Dashboard() {
   const navigate = useNavigate();
   const actions = useStore((s) => s.actions);
+  const [kpis, setKpis] = useState<Kpis>(seedKpis as unknown as Kpis);
+  const [live, setLive] = useState(false);
+
+  // KPI headline values are computed server-side from the persisted work queue.
+  useEffect(() => {
+    analytics
+      .kpis()
+      .then((k) => { setKpis(k); setLive(true); })
+      .catch(() => setLive(false));
+  }, []);
   const donut = [
     { name: "Submitted", value: actions.filter((a) => a.status === "Submitted").length },
     { name: "Under Review", value: actions.filter((a) => a.status === "Under Review").length },
@@ -23,7 +35,7 @@ export function Dashboard() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <SectionHeader title="Safety Intelligence" subtitle="Turning your data into proactive insight · month to date" />
+      <SectionHeader title="Safety Intelligence" subtitle={`Turning your data into proactive insight · month to date${live ? " · live from work queue" : ""}`} />
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
         <StatCard label="Incidents MTD" value={kpis.incidentsMTD.value} delta={kpis.incidentsMTD.delta} deltaGood />

@@ -7,7 +7,7 @@ import { nextId } from "../../lib/util";
 import { api, isDisabled } from "../../lib/api";
 
 const autoFields = [
-  ["Worker", "Thabo Nkosi"],
+  ["Worker", "Arjun Sharma"],
   ["Crew", "C-Shift"],
   ["Shift", "Day Shift"],
   ["Area / Location", "Swartberg conveyor gantry"],

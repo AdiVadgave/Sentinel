@@ -78,7 +78,7 @@ export function Handover() {
 
       <Card className="p-4 mt-5">
         <div className="grid sm:grid-cols-2 gap-4">
-          <Labeled label="Outgoing supervisor"><Input defaultValue="Sipho Khumalo · Day Shift" /></Labeled>
+          <Labeled label="Outgoing supervisor"><Input defaultValue="Sanjay Kapoor · Day Shift" /></Labeled>
           <Labeled label="Incoming supervisor"><Input defaultValue="Night Shift Supervisor" /></Labeled>
         </div>
 
@@ -109,7 +109,7 @@ export function Handover() {
               <Chip tone="slate">POPIA · Internal (C3)</Chip>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-              <div><span className="text-slate-500">Outgoing:</span> Sipho Khumalo</div>
+              <div><span className="text-slate-500">Outgoing:</span> Sanjay Kapoor</div>
               <div><span className="text-slate-500">Incoming:</span> Night Shift</div>
             </div>
             <p className="mt-4 text-sm text-navy-800 leading-relaxed">{summary || "No summary captured."}</p>

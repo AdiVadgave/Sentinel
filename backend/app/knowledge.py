@@ -12,7 +12,7 @@ SOPS: list[dict] = [
         "title": "Working at Heights",
         "version": "v3.2",
         "approved": "12 Apr 2026",
-        "owner": "Dr A. Modau",
+        "owner": "Dr A. Mehta",
         "source": "SharePoint › HSE › SOPs › SOP-WAH-014.pdf",
         "critical_controls": [
             "Fall-arrest harness inspected and clipped to a certified anchor at all times above 1.8 m.",
@@ -41,7 +41,7 @@ SOPS: list[dict] = [
         "title": "Lockout / Tagout — Energy Isolation",
         "version": "v4.0",
         "approved": "28 Feb 2026",
-        "owner": "S. Khumalo",
+        "owner": "S. Kapoor",
         "source": "SharePoint › HSE › SOPs › SOP-LOTO-007.pdf",
         "critical_controls": [
             "Identify and isolate ALL energy sources (electrical, hydraulic, pneumatic, gravitational).",
@@ -68,7 +68,7 @@ SOPS: list[dict] = [
         "title": "Confined Space Entry",
         "version": "v2.3",
         "approved": "15 Mar 2026",
-        "owner": "P. van Wyk",
+        "owner": "P. Verma",
         "source": "SharePoint › HSE › SOPs › SOP-CS-009.pdf",
         "critical_controls": [
             "Confined-space entry permit issued; atmosphere tested (O2, LEL, CO, H2S) before and during entry.",
@@ -94,7 +94,7 @@ SOPS: list[dict] = [
         "title": "Dropped-Object Prevention",
         "version": "v2.0",
         "approved": "05 May 2026",
-        "owner": "L. Mokoena",
+        "owner": "L. Menon",
         "source": "SharePoint › HSE › SOPs › SOP-DOP-005.pdf",
         "critical_controls": [
             "Tool tethering for all work at height.",
@@ -119,7 +119,7 @@ SOPS: list[dict] = [
         "title": "Mobile Equipment Operation",
         "version": "v1.8",
         "approved": "11 Jan 2026",
-        "owner": "S. Khumalo",
+        "owner": "S. Kapoor",
         "source": "SharePoint › HSE › SOPs › SOP-ME-021.pdf",
         "critical_controls": [
             "Pre-use inspection completed and logged before operation.",
@@ -143,7 +143,7 @@ SOPS: list[dict] = [
         "title": "ICAM Incident Investigation",
         "version": "v2.1",
         "approved": "20 Feb 2026",
-        "owner": "Dr A. Modau",
+        "owner": "Dr A. Mehta",
         "source": "SharePoint › HSE › SOPs › SOP-INV-002.pdf",
         "critical_controls": [
             "Investigate using the ICAM model: absent/failed defences, individual/team actions, "
@@ -263,6 +263,63 @@ def _standards_blocks() -> str:
         pts = "\n".join(f"   - {p}" for p in s["key_points"])
         blocks.append(f"[{s['id']} · {s['title']} · {s['authority']}]\n  {s['scope']}\n{pts}")
     return "\n\n".join(blocks)
+
+
+# Document status for the Knowledge Base UI (version-control / change-monitoring
+# story). Anything not listed is "Current". Kept here so the corpus stays the
+# single source of truth for both the LLM grounding and the KB screen.
+_DOC_STATUS = {
+    "SOP-WAH-014": "Standard changed",  # revised national fall-protection standard
+    "SOP-ME-021": "Review due",
+    "MHSA-1996": "Standard changed",
+}
+
+
+def knowledge_docs() -> list[dict]:
+    """Unified, UI-ready list of SOPs + standards for the Knowledge Base screen.
+
+    Built from the same corpus the agents are grounded in, so the KB reflects
+    the real documents (with version history), not a separate hardcoded list.
+    """
+    docs: list[dict] = []
+    for s in SOPS:
+        docs.append({
+            "id": s["id"],
+            "title": s["title"],
+            "type": "SOP",
+            "version": s["version"],
+            "owner": s["owner"],
+            "approved": s["approved"],
+            "status": _DOC_STATUS.get(s["id"], "Current"),
+            "source": s["source"],
+            "body": s["body"],
+            "critical_controls": s["critical_controls"],
+            "history": s.get("history", []),
+        })
+    for s in STANDARDS:
+        docs.append({
+            "id": s["id"],
+            "title": s["title"],
+            "type": "Standard",
+            "version": "current",
+            "owner": s["authority"],
+            "approved": "Statutory / published",
+            "status": _DOC_STATUS.get(s["id"], "Current"),
+            "source": s["authority"],
+            "body": s["scope"],
+            "critical_controls": s["key_points"],
+            "history": [],
+        })
+    return docs
+
+
+def sop_currency() -> int:
+    """Percentage of internal SOPs whose status is 'Current' (a real KPI)."""
+    sops = [d for d in knowledge_docs() if d["type"] == "SOP"]
+    if not sops:
+        return 100
+    current = sum(1 for d in sops if d["status"] == "Current")
+    return round(100 * current / len(sops))
 
 
 def corpus_text() -> str:
