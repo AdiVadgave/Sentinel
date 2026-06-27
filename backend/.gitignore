@@ -2,3 +2,5 @@
 __pycache__/
 *.pyc
 .env
+admin_store.json
+admin_store.json.tmp

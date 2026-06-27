@@ -8,7 +8,7 @@ from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from .. import azure_client, fallback
+from .. import azure_client, fallback, store
 from ..config import get_settings
 from ..knowledge import SOPS, SOPS_BY_ID
 from ..prompts import (
@@ -64,8 +64,22 @@ class LessonRequest(BaseModel):
     related: list[str] = []
 
 
-def _json_agent(system: str, user: str, fallback_fn, max_tokens: int = 600) -> dict:
+def _disabled_notice(agent_id: str) -> dict:
+    """Uniform response when an Admin has switched an agent off in Settings."""
+    name = next((a["name"] for a in store.list_agents() if a["id"] == agent_id), agent_id)
+    return {
+        "disabled": True,
+        "message": f"The {name} agent is currently disabled by the administrator. "
+                   "Re-enable it in Admin → Settings to use this feature.",
+        "mode": "disabled",
+    }
+
+
+def _json_agent(system: str, user: str, fallback_fn, max_tokens: int = 600,
+                agent_id: str | None = None) -> dict:
     """Run a structured-JSON agent call with graceful offline fallback."""
+    if agent_id and not store.agent_enabled(agent_id):
+        return _disabled_notice(agent_id)
     settings = get_settings()
     if settings.azure_ready:
         try:
@@ -84,9 +98,25 @@ def _json_agent(system: str, user: str, fallback_fn, max_tokens: int = 600) -> d
     return out
 
 
+def _apply_threshold(result: dict) -> dict:
+    """Stamp the admin-configured confidence threshold onto a routing result and
+    flag whether the Supervisor was confident enough to auto-route. Below the
+    threshold the UI can show 'needs human routing' instead of auto-dispatching."""
+    threshold = store.get_threshold()
+    try:
+        confidence = float(result.get("confidence", 0))
+    except (TypeError, ValueError):
+        confidence = 0.0
+    result["threshold"] = threshold
+    result["auto_routed"] = confidence >= threshold
+    return result
+
+
 @router.post("/classify")
 def classify(req: AskRequest) -> dict:
     """Supervisor agent: intent classification + routing (drives the routing strip)."""
+    if not store.agent_enabled("supervisor"):
+        return _disabled_notice("supervisor")
     settings = get_settings()
     if settings.azure_ready:
         try:
@@ -96,14 +126,14 @@ def classify(req: AskRequest) -> dict:
             ], max_tokens=200)
             result.setdefault("route", "knowledge-risk")
             result["mode"] = "azure"
-            return result
+            return _apply_threshold(result)
         except Exception as exc:  # noqa: BLE001 — demo must not hard-fail
             data = fallback.classify(req.message)
             data["mode"] = f"fallback ({type(exc).__name__})"
-            return data
+            return _apply_threshold(data)
     data = fallback.classify(req.message)
     data["mode"] = "offline"
-    return data
+    return _apply_threshold(data)
 
 
 @router.get("/sops")
@@ -119,6 +149,8 @@ def get_sop(sop_id: str) -> dict:
 @router.post("/ask")
 def ask(req: AskRequest) -> dict:
     """Knowledge & Risk agent: grounded structured answer (non-streaming JSON)."""
+    if not store.agent_enabled("knowledge-risk"):
+        return _disabled_notice("knowledge-risk")
     settings = get_settings()
     route = fallback.classify(req.message)["route"]
     if route == "out-of-domain":
@@ -145,11 +177,20 @@ def ask_stream(req: AskRequest) -> StreamingResponse:
     """Knowledge & Risk agent: token-by-token SSE stream (the live-LLM feel)."""
     settings = get_settings()
     route = fallback.classify(req.message)["route"]
+    kr_enabled = store.agent_enabled("knowledge-risk")
 
     def event(payload: dict) -> str:
         return f"data: {json.dumps(payload)}\n\n"
 
     def generate():
+        if not kr_enabled:
+            notice = _disabled_notice("knowledge-risk")
+            for word in notice["message"].split(" "):
+                yield event({"type": "token", "text": word + " "})
+                time.sleep(0.02)
+            yield event({"type": "done", "mode": "disabled"})
+            return
+
         if route == "out-of-domain":
             for word in fallback.OUT_OF_DOMAIN.split(" "):
                 yield event({"type": "token", "text": word + " "})
@@ -195,6 +236,8 @@ def ask_stream(req: AskRequest) -> StreamingResponse:
 @router.post("/icam")
 def icam(req: IcamRequest) -> dict:
     """Incident Investigation agent: ICAM draft (human sign-off required downstream)."""
+    if not store.agent_enabled("incident-investigation"):
+        return _disabled_notice("incident-investigation")
     settings = get_settings()
     incident = req.model_dump()
     if settings.azure_ready:
@@ -221,14 +264,18 @@ def icam(req: IcamRequest) -> dict:
 def classify_report(req: ReportRequest) -> dict:
     """Intake classifier for a reported near-miss / incident / hazard."""
     user = f"Type: {req.type or 'near-miss'} | Area: {req.area or 'unknown'} | Description: {req.description}"
-    return _json_agent(REPORT_CLASSIFY_SYSTEM, user, lambda: fallback.classify_report(req.description, req.area or ""))
+    return _json_agent(REPORT_CLASSIFY_SYSTEM, user,
+                       lambda: fallback.classify_report(req.description, req.area or ""),
+                       agent_id="incident-investigation")
 
 
 @router.post("/suggest-controls")
 def suggest_controls(req: SuggestRequest) -> dict:
     """AI-suggested pre-task controls confirmation."""
     user = f"Task: {req.task or 'work at height'} | Hazards: {req.hazards or 'working at heights, dropped objects'}"
-    return _json_agent(SUGGEST_CONTROLS_SYSTEM, user, lambda: fallback.suggest_controls(req.task, req.hazards))
+    return _json_agent(SUGGEST_CONTROLS_SYSTEM, user,
+                       lambda: fallback.suggest_controls(req.task, req.hazards),
+                       agent_id="knowledge-risk")
 
 
 @router.post("/report")
@@ -260,6 +307,7 @@ def lesson(req: LessonRequest) -> dict:
         LESSON_SYSTEM, user,
         lambda: fallback.lesson_learned(req.area, req.hazard, req.count),
         max_tokens=700,
+        agent_id="incident-intelligence",
     )
 
 
@@ -271,7 +319,8 @@ def handover_summary(req: HandoverRequest) -> dict:
         "Outstanding actions: 5 (incl. CA-0912 re-barricading, CA-0913 tethered tools). "
         "Crusher conveyor returned to service after belt-scraper change; barricading reinstated."
     )
-    return _json_agent(HANDOVER_SUMMARY_SYSTEM, ctx, lambda: fallback.handover_summary(ctx), max_tokens=500)
+    return _json_agent(HANDOVER_SUMMARY_SYSTEM, ctx, lambda: fallback.handover_summary(ctx),
+                       max_tokens=500, agent_id="shift-handover")
 
 
 def _tokenise(text: str):

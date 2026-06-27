@@ -4,7 +4,7 @@ import { Sparkles, CheckCircle2 } from "lucide-react";
 import { useStore } from "../../store/store";
 import { Button } from "../../components/ui/ui";
 import { nextId } from "../../lib/util";
-import { api } from "../../lib/api";
+import { api, isDisabled } from "../../lib/api";
 
 const autoFields = [
   ["Worker", "Thabo Nkosi"],
@@ -46,8 +46,12 @@ export function PreTask() {
     const checkedHazards = hazards.filter((h) => checked[h]).join(", ") || "working at heights, dropped objects";
     try {
       const r = await api.suggestControls({ task: "Conveyor inspection at height", hazards: checkedHazards });
-      setControls(r.controls);
-      pushToast({ title: "AI suggested controls inserted", detail: (r.standards ?? []).join(" · "), variant: "info" });
+      if (isDisabled(r)) {
+        pushToast({ title: "Knowledge & Risk agent disabled", detail: r.message, variant: "warn" });
+      } else {
+        setControls(r.controls);
+        pushToast({ title: "AI suggested controls inserted", detail: (r.standards ?? []).join(" · "), variant: "info" });
+      }
     } catch {
       setControls(
         "Harness inspected (tag current) and clipped to certified anchor; edge protection verified; " +

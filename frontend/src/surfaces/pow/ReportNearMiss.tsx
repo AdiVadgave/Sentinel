@@ -5,7 +5,7 @@ import { useStore } from "../../store/store";
 import { AgentThinking } from "../../components/agent/AgentBits";
 import { Button, Chip } from "../../components/ui/ui";
 import { nextId } from "../../lib/util";
-import { api } from "../../lib/api";
+import { api, isDisabled } from "../../lib/api";
 
 export function ReportNearMiss() {
   const [type, setType] = useState("Near-Miss");
@@ -29,8 +29,12 @@ export function ReportNearMiss() {
     };
     try {
       const c = await api.classifyReport({ type, area, description: desc });
-      r = { category: c.category, control: c.control, similar: c.similar };
-      if (c.severity) setSeverity(c.severity);
+      if (isDisabled(c)) {
+        pushToast({ title: "Incident Investigation agent disabled", detail: c.message, variant: "warn" });
+      } else {
+        r = { category: c.category, control: c.control, similar: c.similar };
+        if (c.severity) setSeverity(c.severity);
+      }
     } catch {
       /* keep default on backend error */
     }

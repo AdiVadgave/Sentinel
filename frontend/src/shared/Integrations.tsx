@@ -1,27 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plug, RefreshCw, CheckCircle2, Loader2 } from "lucide-react";
 import { useStore } from "../store/store";
 import { Card, SectionHeader, Chip, Button } from "../components/ui/ui";
-import { integrations as seed, type Integration } from "../mock/seed";
+import { admin, type IntegrationState } from "../lib/api";
+import { integrations as seed } from "../mock/seed";
 
 export function Integrations() {
-  const [items, setItems] = useState<Integration[]>(seed);
+  const [items, setItems] = useState<IntegrationState[]>(seed);
   const [syncing, setSyncing] = useState<string | null>(null);
   const pushToast = useStore((s) => s.pushToast);
 
-  const sync = (it: Integration) => {
+  // Load persisted integration state from the backend (falls back to seed).
+  useEffect(() => {
+    admin
+      .getIntegrations()
+      .then((rows) => Array.isArray(rows) && rows.length && setItems(rows))
+      .catch(() => {/* backend unreachable — keep seed data */});
+  }, []);
+
+  const sync = async (it: IntegrationState) => {
     setSyncing(it.id);
-    setTimeout(() => {
-      const newCount = it.records + Math.floor(Math.random() * 40);
-      setItems((prev) => prev.map((x) => (x.id === it.id ? { ...x, records: newCount, lastSync: "just now" } : x)));
+    try {
+      const updated = await admin.syncIntegration(it.id);
+      setItems((prev) => prev.map((x) => (x.id === it.id ? updated : x)));
+      pushToast({ title: `Synced ${updated.records.toLocaleString()} records`, detail: it.name, variant: "success" });
+    } catch {
+      // Backend unreachable — degrade gracefully without persisting.
+      pushToast({ title: "Sync unavailable", detail: `${it.name} — backend offline`, variant: "warn" });
+    } finally {
       setSyncing(null);
-      pushToast({ title: `Synced ${newCount.toLocaleString()} records`, detail: it.name, variant: "success" });
-    }, 1200);
+    }
   };
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <SectionHeader title="Integrations" subtitle="Connected enterprise systems · MCP tool servers in production" />
+      <SectionHeader title="Integrations" subtitle="Connected enterprise systems · sync state persisted server-side" />
       <div className="grid sm:grid-cols-2 gap-4">
         {items.map((it) => (
           <Card key={it.id} className="p-4">

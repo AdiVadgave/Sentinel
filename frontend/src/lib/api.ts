@@ -99,6 +99,85 @@ export const api = {
   sops: () => fetch("/api/agents/sops").then((r) => r.json()),
 };
 
+// --- Admin platform (real, JSON-persisted backend state) ------------------- //
+
+export interface AgentConfig {
+  id: string;
+  name: string;
+  color: string;
+  handledToday: number;
+  enabled: boolean;
+}
+export interface AdminUser {
+  id: string;
+  name: string;
+  role: string;
+  title: string;
+  area: string;
+  initials: string;
+}
+export interface AdminSettings {
+  agents: AgentConfig[];
+  threshold: number;
+  users: AdminUser[];
+}
+export interface IntegrationState {
+  id: string;
+  name: string;
+  connected: boolean;
+  lastSync: string;
+  records: number;
+}
+export interface AuditRow {
+  id: string;
+  ts: string;
+  user: string;
+  agent: string;
+  action: string;
+  source: string;
+  popia: string;
+  outcome: string;
+}
+
+async function send<T>(path: string, method: string, body?: unknown): Promise<T> {
+  const res = await fetch(path, {
+    method,
+    headers: body ? { "Content-Type": "application/json" } : undefined,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) throw new Error(`${path} → ${res.status}`);
+  return res.json() as Promise<T>;
+}
+
+// An agent can be switched off by an Admin in Settings; endpoints then return this.
+export interface DisabledResponse {
+  disabled: true;
+  message: string;
+  mode?: string;
+}
+export function isDisabled(r: unknown): r is DisabledResponse {
+  return !!r && typeof r === "object" && (r as { disabled?: unknown }).disabled === true;
+}
+
+export const admin = {
+  getSettings: () => fetch("/api/admin/settings").then((r) => r.json() as Promise<AdminSettings>),
+  toggleAgent: (id: string, enabled: boolean) =>
+    send<{ id: string; enabled: boolean; agents: AgentConfig[] }>(`/api/admin/agents/${id}`, "PATCH", { enabled }),
+  setThreshold: (threshold: number) =>
+    send<{ threshold: number }>("/api/admin/settings/threshold", "PUT", { threshold }),
+  addUser: (u: { name: string; role?: string; title?: string; area?: string }) =>
+    send<AdminUser>("/api/admin/users", "POST", u),
+  getIntegrations: () =>
+    fetch("/api/admin/integrations").then((r) => r.json() as Promise<IntegrationState[]>),
+  syncIntegration: (id: string) =>
+    send<IntegrationState & { added: number }>(`/api/admin/integrations/${id}/sync`, "POST"),
+  getAudit: () => fetch("/api/audit").then((r) => r.json() as Promise<AuditRow[]>),
+  postAudit: (e: {
+    user: string; agent: string; action: string;
+    source?: string; outcome?: string; popia?: string;
+  }) => send<AuditRow>("/api/audit", "POST", e),
+};
+
 export interface StreamHandlers {
   onToken: (text: string) => void;
   onSource?: (src: KnowledgeSource) => void;

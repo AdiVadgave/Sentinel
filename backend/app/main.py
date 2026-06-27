@@ -5,14 +5,19 @@ Run:  uvicorn app.main:app --reload --port 8000
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from . import store
 from .config import get_settings
-from .routers import agents
+from .routers import admin, agents
 
 settings = get_settings()
 
+# Ensure the Admin JSON store exists (seeded) before serving requests.
+store.init_store()
+
 app = FastAPI(
     title="Sentinel — VZI Safety Intelligence (PoC backend)",
-    description="FastAPI gateway to Azure OpenAI GPT-4o for the Sentinel safety agents.",
+    description="FastAPI gateway to Claude on Azure AI Foundry for the Sentinel safety agents, "
+                "with a JSON-backed Admin platform (config, integrations, audit trail).",
     version="0.1.0",
 )
 
@@ -25,6 +30,7 @@ app.add_middleware(
 )
 
 app.include_router(agents.router)
+app.include_router(admin.router)
 
 
 @app.get("/api/health")

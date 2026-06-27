@@ -16,6 +16,7 @@ import {
   type WorkItem,
 } from "../mock/seed";
 import { nowStamp } from "../lib/util";
+import { admin } from "../lib/api";
 
 export interface Toast {
   id: string;
@@ -46,9 +47,10 @@ interface SentinelState {
   lessons: typeof seedLessons;
   publishLesson: (id: string) => void;
 
-  // audit
+  // audit (persisted to the backend; local copy is an optimistic cache)
   audit: AuditEntry[];
   logAudit: (e: Omit<AuditEntry, "id" | "ts">) => void;
+  loadAudit: () => Promise<void>;
 
   // notifications + toasts
   notifications: Notification[];
@@ -101,10 +103,32 @@ export const useStore = create<SentinelState>()(
         })),
 
       audit: seedAudit,
-      logAudit: (e) =>
+      logAudit: (e) => {
+        // Optimistic local insert so the UI updates instantly (and still works
+        // offline), then persist to the backend and refresh from the source of truth.
         set((s) => ({
           audit: [{ id: `A-${1100 + s.audit.length}`, ts: nowStamp(), ...e }, ...s.audit],
-        })),
+        }));
+        admin
+          .postAudit({
+            user: e.user,
+            agent: e.agent,
+            action: e.action,
+            source: e.source,
+            outcome: e.outcome,
+            // omit popia → let the backend classify it server-side
+          })
+          .then(() => get().loadAudit())
+          .catch(() => {/* backend unreachable — keep the optimistic local entry */});
+      },
+      loadAudit: async () => {
+        try {
+          const rows = await admin.getAudit();
+          if (Array.isArray(rows)) set({ audit: rows as AuditEntry[] });
+        } catch {
+          /* backend unreachable — keep the local/seed audit trail */
+        }
+      },
 
       notifications: seedNotifications,
       markAllRead: () =>

@@ -3,7 +3,7 @@ import { Sparkles, FileDown, Send } from "lucide-react";
 import { useStore } from "../../store/store";
 import { Card, SectionHeader, Button, Dialog, Chip } from "../../components/ui/ui";
 import { ProgressArc } from "../../components/charts/Charts";
-import { api } from "../../lib/api";
+import { api, isDisabled } from "../../lib/api";
 
 const pulled = [
   { label: "Open work orders", value: "4" },
@@ -34,6 +34,11 @@ export function Handover() {
           "Outstanding actions: 5 (CA-0912 re-barricading, CA-0913 tethered tools). Crusher conveyor " +
           "returned to service after belt-scraper change; barricading reinstated and verified at Swartberg."
       );
+      if (isDisabled(r)) {
+        setDrafting(false);
+        pushToast({ title: "Shift Handover agent disabled", detail: r.message, variant: "warn" });
+        return;
+      }
       setSummary(r.summary);
     } catch {
       setSummary(

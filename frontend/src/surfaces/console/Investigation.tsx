@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Pencil, ShieldCheck, FileText, Link2, AlertTriangle } from "lucide-react";
 import { useStore } from "../../store/store";
-import { api, type IcamDraft } from "../../lib/api";
+import { api, isDisabled, type IcamDraft } from "../../lib/api";
 import { AgentThinking } from "../../components/agent/AgentBits";
 import { Card, SectionHeader, Chip, Button, StatusChip } from "../../components/ui/ui";
 import { nowStamp } from "../../lib/util";
@@ -31,7 +31,14 @@ export function Investigation() {
     setDraft(null);
     api
       .icam({ incidentId: incident.id, area: incident.area, type: incident.type, description: incident.description })
-      .then((d) => setDraft(d))
+      .then((d) => {
+        if (isDisabled(d)) {
+          setDraft(null);
+          pushToast({ title: "Incident Investigation agent disabled", detail: d.message, variant: "warn" });
+        } else {
+          setDraft(d);
+        }
+      })
       .catch(() => setDraft(null))
       .finally(() => setLoading(false));
   }, [incident.id]);

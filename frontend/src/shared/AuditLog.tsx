@@ -1,12 +1,20 @@
+import { useEffect } from "react";
 import { useStore } from "../store/store";
 import { Card, SectionHeader, DataTable, Chip } from "../components/ui/ui";
 import type { AuditEntry } from "../mock/seed";
 
 export function AuditLog() {
   const audit = useStore((s) => s.audit);
+  const loadAudit = useStore((s) => s.loadAudit);
+
+  // Pull the canonical, server-persisted trail (POPIA classified server-side).
+  useEffect(() => {
+    loadAudit();
+  }, [loadAudit]);
+
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <SectionHeader title="Audit Log" subtitle="Every AI recommendation & sign-off · source, version, POPIA classification" />
+      <SectionHeader title="Audit Log" subtitle="Every AI recommendation & sign-off · source, version, POPIA classification · persisted server-side" />
       <Card className="p-4">
         <DataTable<AuditEntry>
           rows={audit}
