@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  background: #f1f4f9;
+  color: #0f1838;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Shimmer placeholder used for "AI auto-fill" effect */
+.shimmer {
+  background: linear-gradient(90deg, #e6ebf5 25%, #f4f7fc 50%, #e6ebf5 75%);
+  background-size: 800px 100%;
+}
+
+/* Thin scrollbars for the enterprise feel */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c7d0e0 transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #c7d0e0;
+  border-radius: 8px;
+}
