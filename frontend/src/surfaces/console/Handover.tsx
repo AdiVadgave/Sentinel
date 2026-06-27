@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Sparkles, FileDown, Send, Mic } from "lucide-react";
+import { Sparkles, FileDown, Send } from "lucide-react";
 import { useStore } from "../../store/store";
 import { Card, SectionHeader, Button, Dialog, Chip } from "../../components/ui/ui";
 import { ProgressArc } from "../../components/charts/Charts";
@@ -83,16 +83,6 @@ export function Handover() {
             <Button size="sm" variant="secondary" onClick={aiDraft} disabled={drafting}><Sparkles size={13} /> {drafting ? "Drafting…" : "AI draft summary"}</Button>
           </div>
           <textarea value={summary} onChange={(e) => setSummary(e.target.value)} rows={5} className="w-full rounded-lg border border-slate-300 p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30" placeholder="Summary of the shift…" />
-        </div>
-
-        <div className="mt-4 flex items-center gap-3 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2.5">
-          <Mic size={18} className="text-brand" />
-          <div className="flex-1 flex items-center gap-0.5 h-6">
-            {[8, 14, 20, 12, 24, 10, 18, 22, 9, 16, 26, 11, 19].map((h, i) => (
-              <span key={i} className="w-1 rounded bg-brand/60" style={{ height: h }} />
-            ))}
-          </div>
-          <span className="text-xs text-slate-500 italic">"Barricading reinstated at crusher, all clear."</span>
         </div>
 
         <div className="mt-4 flex gap-2">

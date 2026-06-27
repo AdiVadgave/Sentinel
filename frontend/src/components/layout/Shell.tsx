@@ -5,7 +5,6 @@ import * as Icons from "lucide-react";
 import { useStore } from "../../store/store";
 import { navByRole } from "./nav";
 import type { Role } from "../../mock/seed";
-import { agents, notifications as seedNotif } from "../../mock/seed";
 import { Chip } from "../ui/ui";
 import { cx } from "../../lib/util";
 
@@ -58,8 +57,6 @@ function Sidebar() {
           <NavItemLink key={it.to} to={it.to} label={it.label} icon={it.icon} />
         ))}
       </nav>
-
-      <AgentRail />
     </aside>
   );
 }
@@ -79,24 +76,6 @@ function NavItemLink({ to, label, icon }: { to: string; label: string; icon: str
       <Icon name={icon} />
       {label}
     </NavLink>
-  );
-}
-
-function AgentRail() {
-  const online = agents.filter((a) => a.status === "online").length;
-  return (
-    <div className="border-t border-white/10 px-4 py-3">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-green-400" />
-        </span>
-        <span className="text-xs font-semibold text-green-300">{online} agents online</span>
-      </div>
-      <p className="text-[10px] text-blue-200/70 leading-snug">
-        Guardrails active · grounded answers only · human sign-off on safety-critical actions
-      </p>
-    </div>
   );
 }
 
@@ -129,10 +108,6 @@ function TopBar() {
         />
       </div>
       <div className="ml-auto flex items-center gap-3">
-        <Chip tone="slate" className="hidden md:inline-flex">
-          <Icons.Lock size={12} /> POPIA · Internal (C3)
-        </Chip>
-
         {/* Notification bell */}
         <div className="relative">
           <button

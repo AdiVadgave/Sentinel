@@ -29,6 +29,7 @@ export function PreTask() {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [controls, setControls] = useState("");
   const [error, setError] = useState("");
+  const [suggesting, setSuggesting] = useState(false);
   const navigate = useNavigate();
   const addWork = useStore((s) => s.addWork);
   const pushToast = useStore((s) => s.pushToast);
@@ -40,7 +41,6 @@ export function PreTask() {
     return () => clearTimeout(t);
   }, []);
 
-  const [suggesting, setSuggesting] = useState(false);
   const suggest = async () => {
     setSuggesting(true);
     const checkedHazards = hazards.filter((h) => checked[h]).join(", ") || "working at heights, dropped objects";
@@ -59,8 +59,8 @@ export function PreTask() {
   };
 
   const submit = () => {
-    if (!hazards.every((h) => checked[h])) {
-      setError("Confirm all critical controls before starting.");
+    if (!hazards.some((h) => checked[h])) {
+      setError("Confirm at least one critical control for this task before starting.");
       return;
     }
     setError("");

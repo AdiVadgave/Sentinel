@@ -115,6 +115,21 @@ def suggest_controls(task: str = "", hazards: str = "") -> dict:
     }
 
 
+def lesson_learned(area: str = "", hazard: str = "", count: int = 4) -> dict:
+    return {
+        "insight": "Barricading and exclusion zones were not re-established after maintenance breaks.",
+        "title": "Re-establish barricading immediately after maintenance",
+        "summary": (
+            f"{count} {hazard.lower() or 'dropped-object'} near-misses at {area or 'the Gamsberg crusher'} "
+            "shared one cause: barricading and exclusion zones were not re-established after maintenance "
+            "activity. Make re-barricading a verified, signed step in permit close-out, and tether all "
+            "tools used at height so a lapse cannot become a dropped object."
+        ),
+        "control": "Permit close-out must verify re-barricading; tethered-tool kits mandatory at height.",
+        "standards": ["SOP-DOP-005 v2.0", "ICMM Critical Control Management", "ISO 45001 hierarchy of controls"],
+    }
+
+
 def report_doc(report_id: str = "monthly") -> dict:
     if report_id == "incident":
         return {

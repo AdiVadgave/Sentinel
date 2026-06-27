@@ -73,6 +73,14 @@ export interface GeneratedReport {
   sections: { heading: string; body: string }[];
   mode?: string;
 }
+export interface GeneratedLesson {
+  insight: string;
+  title: string;
+  summary: string;
+  control: string;
+  standards?: string[];
+  mode?: string;
+}
 
 export const api = {
   health: () => fetch("/api/health").then((r) => r.json()),
@@ -86,6 +94,8 @@ export const api = {
   handoverSummary: (context?: string) =>
     postJson<HandoverSummary>("/api/agents/handover-summary", { context: context ?? "" }),
   report: (reportId: string) => postJson<GeneratedReport>("/api/agents/report", { reportId }),
+  lesson: (p: { area: string; hazard: string; count: number; window: string; related: string[] }) =>
+    postJson<GeneratedLesson>("/api/agents/lesson", p),
   sops: () => fetch("/api/agents/sops").then((r) => r.json()),
 };
 

@@ -14,6 +14,7 @@ from ..knowledge import SOPS, SOPS_BY_ID
 from ..prompts import (
     HANDOVER_SUMMARY_SYSTEM,
     ICAM_SYSTEM,
+    LESSON_SYSTEM,
     REPORT_CLASSIFY_SYSTEM,
     REPORT_SYSTEM,
     SUGGEST_CONTROLS_SYSTEM,
@@ -53,6 +54,14 @@ class HandoverRequest(BaseModel):
 class ReportRequestBody(BaseModel):
     reportId: str = "monthly"
     context: str = ""
+
+
+class LessonRequest(BaseModel):
+    area: str = ""
+    hazard: str = ""
+    count: int = 4
+    window: str = "90 days"
+    related: list[str] = []
 
 
 def _json_agent(system: str, user: str, fallback_fn, max_tokens: int = 600) -> dict:
@@ -237,6 +246,21 @@ def report(req: ReportRequestBody) -> dict:
         f"{req.context}"
     )
     return _json_agent(REPORT_SYSTEM, user, lambda: fallback.report_doc(rid), max_tokens=2500)
+
+
+@router.post("/lesson")
+def lesson(req: LessonRequest) -> dict:
+    """Incident Intelligence: analyse a recurring pattern and draft a lesson-learned."""
+    user = (
+        f"Recurring pattern: {req.count} {req.hazard or 'dropped-object'} events at "
+        f"{req.area or 'Gamsberg Concentrator'} over {req.window}. "
+        f"Related event IDs: {', '.join(req.related) or 'NM-2026-0337, NM-2026-0331, NM-2026-0318, INC-2026-0204'}."
+    )
+    return _json_agent(
+        LESSON_SYSTEM, user,
+        lambda: fallback.lesson_learned(req.area, req.hazard, req.count),
+        max_tokens=700,
+    )
 
 
 @router.post("/handover-summary")
