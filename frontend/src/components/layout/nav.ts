@@ -10,7 +10,7 @@ export interface NavItem {
 export const navByRole: Record<Role, NavItem[]> = {
   Worker: [
     { to: "/pow", label: "Home", icon: "Home" },
-    { to: "/pow/ask", label: "Ask Sentinel", icon: "MessageSquare" },
+    { to: "/pow/ask", label: "Ask Zen-Sentinel", icon: "MessageSquare" },
     { to: "/pow/checklist", label: "Pre-Task Checklist", icon: "ListChecks" },
     { to: "/pow/report", label: "Report Near-Miss", icon: "AlertTriangle" },
     { to: "/pow/handover", label: "My Shift", icon: "Clock" },

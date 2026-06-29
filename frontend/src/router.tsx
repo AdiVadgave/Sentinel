@@ -6,7 +6,7 @@ import { Login } from "./surfaces/Login";
 
 // Point-of-Work pages
 import { PowHome } from "./surfaces/pow/PowHome";
-import { AskSentinel } from "./surfaces/pow/AskSentinel";
+import { AskZenSentinel } from "./surfaces/pow/AskZenSentinel";
 import { PreTask } from "./surfaces/pow/PreTask";
 import { ReportNearMiss } from "./surfaces/pow/ReportNearMiss";
 import { WorkerShift } from "./surfaces/pow/WorkerShift";
@@ -58,7 +58,7 @@ export const router = createBrowserRouter([
         element: <PowLayout />,
         children: [
           { index: true, element: <PowHome /> },
-          { path: "ask", element: <AskSentinel /> },
+          { path: "ask", element: <AskZenSentinel /> },
           { path: "checklist", element: <PreTask /> },
           { path: "report", element: <ReportNearMiss /> },
           { path: "handover", element: <WorkerShift /> },
