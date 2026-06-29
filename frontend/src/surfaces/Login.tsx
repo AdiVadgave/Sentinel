@@ -7,7 +7,7 @@ import { Button } from "../components/ui/ui";
 import type { Role } from "../mock/seed";
 
 const personas: { role: Role; desc: string }[] = [
-  { role: "Worker", desc: "Point-of-Work app · ask Sentinel, log pre-tasks, report" },
+  { role: "Worker", desc: "Point-of-Work app · ask Zen-Sentinel, log pre-tasks, report" },
   { role: "HSE Officer", desc: "Console · investigate incidents, approvals, handover" },
   { role: "HSE Manager", desc: "Analytics · intelligence, patterns, predictive, reports" },
   { role: "Admin", desc: "Platform · agents, integrations, audit" },
@@ -64,7 +64,7 @@ export function Login() {
             <ShieldCheck size={24} />
           </div>
           <div>
-            <p className="text-xl font-extrabold">Sentinel</p>
+            <p className="text-xl font-extrabold">Zen-Sentinel</p>
             <p className="text-xs text-blue-300 uppercase tracking-widest">VZI Safety Intelligence</p>
           </div>
         </div>

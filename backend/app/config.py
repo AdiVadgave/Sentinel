@@ -1,6 +1,6 @@
 """Application configuration loaded from environment / .env file.
 
-The Sentinel agents run on a **Claude** model deployed in **Azure AI Foundry**,
+The Zen-Sentinel agents run on a **Claude** model deployed in **Azure AI Foundry**,
 reached through the native Anthropic Messages API (the AnthropicFoundry client).
 The env var names keep the AZURE_OPENAI_* prefix for backwards compatibility with
 existing .env files, but they describe a Foundry/Anthropic deployment.

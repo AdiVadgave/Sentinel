@@ -53,7 +53,7 @@ function Sidebar() {
           <Icons.ShieldCheck size={20} />
         </div>
         <div>
-          <p className="font-extrabold leading-tight">Sentinel</p>
+          <p className="font-extrabold leading-tight">Zen-Sentinel</p>
           <p className="text-[10px] text-blue-300 uppercase tracking-wide">VZI Safety Intelligence</p>
         </div>
       </div>

@@ -113,7 +113,7 @@ export function ReportNearMiss() {
         <Send size={18} /> Submit report
       </Button>
 
-      {classifying && <AgentThinking label="Sentinel is classifying this report…" />}
+      {classifying && <AgentThinking label="Zen-Sentinel is classifying this report…" />}
 
       {result && (
         <div className="rounded-xl bg-white border border-slate-200 p-3 space-y-2">

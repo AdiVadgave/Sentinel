@@ -1,9 +1,9 @@
-# Sentinel — AI-Enabled Safety Agents
+# Zen-Sentinel — AI-Enabled Safety Agents
 ## 2-Day Clickable PoC: Complete Implementation Plan & Build Bible
 
 **Client:** Black Mountain Mine — Vedanta Zinc International (VZI)
 **Vendor:** Zensar Technologies
-**Demo product name:** *Sentinel* — VZI Safety Intelligence Platform
+**Demo product name:** *Zen-Sentinel* — VZI Safety Intelligence Platform
 **Team:** 3 Full-Stack Developers · **Time:** 2 days (16 working hours)
 **Purpose of this document:** the single source of truth your three developers build from. Every screen, every mock, every hour is specified so nobody has to invent anything during the sprint.
 
@@ -142,13 +142,13 @@ At any answer, click the **source chip** → drawer shows the exact SOP passage,
 Three "surfaces" mirroring the proposal architecture (slide 5), plus shared shell. One React SPA; the surface switches by role.
 
 ```
-Sentinel SPA
+Zen-Sentinel SPA
 ├── Auth / Login (fake Entra)
 ├── Persona switcher (Worker · HSE Officer · HSE Manager · Executive · Admin)
 │
 ├── SURFACE 1 — Point-of-Work App   (mobile/PWA frame, Worker)
 │     ├── Home (agent launcher + my tasks)
-│     ├── Ask Sentinel (Supervisor chat → Knowledge & Risk)
+│     ├── Ask Zen-Sentinel (Supervisor chat → Knowledge & Risk)
 │     ├── Pre-Task Checklist (digitised, auto-filled)
 │     ├── Report Near-Miss / Incident
 │     └── My Shift / Handover (worker view)
@@ -191,11 +191,11 @@ Below: every screen with purpose, fields, buttons, tables, charts, dummy data, p
 ### 5.2 Point-of-Work — Home (Worker)
 - **Purpose:** the worker's launchpad at the point of work; proves "access at point of work."
 - **Frame:** rendered inside a phone mock (rounded device frame, status bar with time/signal/battery) so it unmistakably reads as a field app even on a laptop screen.
-- **Content:** greeting *"Hi Thabo · Day Shift · Black Mountain Deeps"*; big **"Ask Sentinel"** button; quick tiles: *Pre-Task Checklist*, *Report Near-Miss*, *My Permits*, *Shift Handover*. "My open tasks" list (3 items). Bottom: *4 agents online · grounded answers only* trust strip.
+- **Content:** greeting *"Hi Thabo · Day Shift · Black Mountain Deeps"*; big **"Ask Zen-Sentinel"** button; quick tiles: *Pre-Task Checklist*, *Report Near-Miss*, *My Permits*, *Shift Handover*. "My open tasks" list (3 items). Bottom: *4 agents online · grounded answers only* trust strip.
 - **Dummy data:** worker = Thabo Nkosi, crew C-Shift, area Swartberg.
-- **Clickable:** "Ask Sentinel" → 5.3; tiles → respective screens.
+- **Clickable:** "Ask Zen-Sentinel" → 5.3; tiles → respective screens.
 
-### 5.3 Ask Sentinel — Supervisor chat → Knowledge & Risk *(THE signature screen, P0)*
+### 5.3 Ask Zen-Sentinel — Supervisor chat → Knowledge & Risk *(THE signature screen, P0)*
 - **Purpose:** demonstrate intent classification → routing → grounded plain-language answer with source+version. This is the most-rehearsed screen.
 - **Layout:** chat thread. Suggested prompt chips above the input: *"Can I work at heights near the Swartberg conveyor today?"*, *"What are the critical controls for LOTO?"*, *"Show me the confined-space SOP."*
 - **The scripted sequence (all front-end, ~4.5s total):**
@@ -218,7 +218,7 @@ Below: every screen with purpose, fields, buttons, tables, charts, dummy data, p
 ### 5.5 Report Near-Miss / Incident (Worker)
 - **Purpose:** capture at point of work; feeds investigation + intelligence.
 - **Fields:** Type (near-miss / incident / hazard), Area, Date/time (default now), Description (textarea), Photo upload (fake, shows thumbnail), Severity (low/med/high). **Button:** "Submit report."
-- **AI assist:** on submit, *"Sentinel is classifying this report…"* → returns suggested category (*Dropped object*), suggested critical control, and *"Similar events: 3 in last 90 days"* preview (foreshadows intelligence).
+- **AI assist:** on submit, *"Zen-Sentinel is classifying this report…"* → returns suggested category (*Dropped object*), suggested critical control, and *"Similar events: 3 in last 90 days"* preview (foreshadows intelligence).
 - **Success:** toast + new card in Supervisor Console queue with status **Submitted**.
 
 ### 5.6 Supervisor Console — Home (HSE Officer/Manager)
@@ -455,7 +455,7 @@ React (Vite + TS) SPA
 ## 14. Folder Structure
 
 ```
-sentinel-poc/
+zen-sentinel-poc/
 ├── public/                 # logos, hero images, pre-baked PDFs, favicon
 ├── src/
 │   ├── main.tsx, App.tsx, router.tsx
@@ -540,7 +540,7 @@ Dev A builds these in the first 2 hours; B and C consume them.
 | **H3** | TopBar, SurfaceShell, AgentRail, persona switch, Login | Console Home + Work Queue (DataTable) reading store | StatCard + Recharts wrappers; KPI cards on Dashboard |
 | **H4** | PhoneFrame + PoW Home + nav | Incident Investigation layout + ICAM draft (static) | Heatmap + Trend + Donut wired to JSON |
 | **H5** | `RoutingStrip` + `StreamedAnswer` + `useFakeStream` | ICAM editable sections + sign-off gate (state flip) | Recurring Patterns + Lessons-Learned screen |
-| **H6** | **Ask Sentinel** chat end-to-end (chips→route→answer→source) | Approvals Kanban (drag → transition → audit) | Predictive Early-Warning cards + anomaly chart |
+| **H6** | **Ask Zen-Sentinel** chat end-to-end (chips→route→answer→source) | Approvals Kanban (drag → transition → audit) | Predictive Early-Warning cards + anomaly chart |
 | **H7** | Pre-Task Checklist (auto-fill anim) + cross-wire to Console queue | SourceDrawer + Knowledge Base table + change alert | Integrations panel (sync toasts) + Audit Log table |
 | **H8** | **Day-1 integration merge** + smoke test of Journey 1 | Merge; verify Journey 2 (report→investigate→approve) | Merge; verify Journey 5 (dashboard→pattern) |
 
@@ -584,13 +584,13 @@ The pattern: a **status panel** (everything "Connected ✓"), **sync buttons** t
 **Setup:** start on Login as Dr Modau. Have the build pre-loaded; turn off notifications on the demo machine; use the rehearsed prompts only.
 
 **[0:00–1:30] The problem (Login + framing).**
-*"Your SoW named four execution gaps — knowledge not at the point of work, inconsistent documentation, recurring incidents, unused data. We built Sentinel to close all four with four AI agents and one supervisor, with your HSE team always in control."* Sign in → *"Single sign-on through your Entra ID."* Land on persona picker.
+*"Your SoW named four execution gaps — knowledge not at the point of work, inconsistent documentation, recurring incidents, unused data. We built Zen-Sentinel to close all four with four AI agents and one supervisor, with your HSE team always in control."* Sign in → *"Single sign-on through your Entra ID."* Land on persona picker.
 
-**[1:30–4:30] Point of work — Worker (Journey 1).** Pick **Worker**. Phone frame appears. *"This is what a supervisor sees on the ground."* Tap **Ask Sentinel** → use the working-at-heights chip. Let the **routing strip** play. *"The supervisor agent classifies the intent and routes to the Knowledge & Risk agent."* Answer streams. *"Plain language — and crucially, here's the source: SOP-WAH-014, version 3.2, approved in April. No guessing, fully traceable."* Click the source chip → drawer. Tap **Start pre-task checklist** → watch auto-fill → submit → *"That just went to the HSE console."*
+**[1:30–4:30] Point of work — Worker (Journey 1).** Pick **Worker**. Phone frame appears. *"This is what a supervisor sees on the ground."* Tap **Ask Zen-Sentinel** → use the working-at-heights chip. Let the **routing strip** play. *"The supervisor agent classifies the intent and routes to the Knowledge & Risk agent."* Answer streams. *"Plain language — and crucially, here's the source: SOP-WAH-014, version 3.2, approved in April. No guessing, fully traceable."* Click the source chip → drawer. Tap **Start pre-task checklist** → watch auto-fill → submit → *"That just went to the HSE console."*
 
 **[4:30–8:00] HSE Console + ICAM + human-in-the-loop (Journey 2).** Switch to **HSE Officer**. Show the queue — *"there's the pre-task, and a near-miss reported this morning."* Open the near-miss → **Incident Investigation agent drafts the ICAM** (loader → sections stream). *"It drafts the timeline, failed defences, causal factors and corrective actions — aligned to your ICAM SOP."* Edit one corrective action → *"I stay in control."* Click **Sign off & approve** → state flips green. *"Nothing is finalised without an HSE owner's sign-off, and every step is logged."*
 
-**[8:00–10:30] Intelligence — the recurring pattern (Journey 5→2).** Switch to **HSE Manager** → Analytics. *"This is the data you already have, finally working for you."* KPI cards, then the **heatmap** — click the glowing Gamsberg cell. *"Sentinel spotted the 4th dropped-object near-miss in 90 days — common cause, barricading not re-established."* Show the auto-generated **lessons-learned** → **Publish to knowledge base.**
+**[8:00–10:30] Intelligence — the recurring pattern (Journey 5→2).** Switch to **HSE Manager** → Analytics. *"This is the data you already have, finally working for you."* KPI cards, then the **heatmap** — click the glowing Gamsberg cell. *"Zen-Sentinel spotted the 4th dropped-object near-miss in 90 days — common cause, barricading not re-established."* Show the auto-generated **lessons-learned** → **Publish to knowledge base.**
 
 **[10:30–12:00] Shift handover + predictive (Journeys 3 & 4).** Open **Shift Handover** → completeness meter climbs 62%→94% → **Generate PDF** (preview). Then **Predictive Early-Warning** → EX-204 card → *"indicative today; with your Plant Maintenance and sensor data in production, this gets sharper."*
 

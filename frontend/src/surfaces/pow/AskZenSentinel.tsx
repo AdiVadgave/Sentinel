@@ -18,7 +18,7 @@ interface Turn {
   refused?: boolean;
 }
 
-export function AskSentinel() {
+export function AskZenSentinel() {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -86,7 +86,7 @@ export function AskSentinel() {
   return (
     <div className="flex flex-col h-full bg-slate-50">
       <div className="px-4 py-3 border-b border-slate-200 bg-white">
-        <h1 className="font-extrabold text-navy-900">Ask Sentinel</h1>
+        <h1 className="font-extrabold text-navy-900">Ask Zen-Sentinel</h1>
         <p className="text-[11px] text-slate-500">Supervisor → Knowledge & Risk · grounded answers only</p>
       </div>
 

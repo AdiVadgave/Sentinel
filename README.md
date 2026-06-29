@@ -1,10 +1,10 @@
-# Sentinel — VZI Safety Intelligence Platform (PoC)
+# Zen-Sentinel — VZI Safety Intelligence Platform (PoC)
 
 AI-enabled safety agents for **Black Mountain Mine · Vedanta Zinc International**, built by
 **Zensar**. A clickable, demo-grade platform with four safety agents + a supervisor and
 human-in-the-loop sign-off.
 
-This implementation follows `Sentinel_PoC_Build_Bible.md` with one deliberate upgrade: instead of
+This implementation follows `Zen-Sentinel_PoC_Build_Bible.md` with one deliberate upgrade: instead of
 faking the AI, it runs a **real FastAPI backend** that calls your **Azure AI Foundry** Claude
 deployment (`claude-sonnet-4-6`) over the **native Anthropic Messages API** (the `AnthropicFoundry`
 client — the Foundry endpoint serves Claude at `/anthropic`, not the OpenAI route). The agents are
@@ -18,7 +18,7 @@ scripted responses so the demo never breaks.
 > For runnable **"you type → the AI responds"** examples, see **[EXAMPLES.md](EXAMPLES.md)**.
 
 ```
-Sentinel/
+Zen-Sentinel/
 ├── backend/    # FastAPI gateway → Azure AI Foundry · Claude  (Python)
 └── frontend/   # Vite + React + TS + Tailwind SPA            (the 3 surfaces)
 ```
@@ -78,7 +78,7 @@ fallback; once keys are in, the same screens use live GPT-4o.
 ## Demo path (15 min — see bible §20)
 
 1. **Login** as Dr Modau → "Sign in with Entra ID" → pick **Worker**.
-2. **Ask Sentinel** → tap the *working-at-heights* chip → watch Supervisor route → GPT-4o streams a
+2. **Ask Zen-Sentinel** → tap the *working-at-heights* chip → watch Supervisor route → GPT-4o streams a
    grounded answer → click the **source chip** (SOP-WAH-014 v3.2) → **Start pre-task checklist** →
    submit (it appears in the HSE console — cross-surface wiring).
 3. Switch persona → **HSE Officer** → open the near-miss → **ICAM agent drafts** the investigation →
@@ -101,7 +101,7 @@ Switch persona anytime from the top-right avatar menu.
 
 ## Notes
 
-- **State persists** to `localStorage` (`sentinel-poc` key) — a mid-demo refresh won't reset the
+- **State persists** to `localStorage` (`zen-sentinel-poc` key) — a mid-demo refresh won't reset the
   workflow. Clear it from DevTools to reset the seed data.
 - **Offline rehearsal:** set `USE_AZURE=false` in `.env` to force scripted mode for a guaranteed-stable run.
 - Production evolution path (pgvector RAG, MCP tool servers, Entra SSO, immutable audit) is in the

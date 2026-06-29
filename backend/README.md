@@ -1,6 +1,6 @@
-# Sentinel — Backend (FastAPI + Azure OpenAI GPT-4o)
+# Zen-Sentinel — Backend (FastAPI + Azure OpenAI GPT-4o)
 
-FastAPI gateway that powers the Sentinel safety agents. It calls your **Azure AI
+FastAPI gateway that powers the Zen-Sentinel safety agents. It calls your **Azure AI
 Foundry / Azure OpenAI GPT-4o** deployment for intent routing, grounded
 knowledge answers (with source + version citations) and ICAM investigation
 drafts. If Azure isn't configured it transparently falls back to scripted

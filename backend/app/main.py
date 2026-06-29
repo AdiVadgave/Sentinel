@@ -1,4 +1,4 @@
-"""Sentinel PoC — FastAPI backend entrypoint.
+"""Zen-Sentinel PoC — FastAPI backend entrypoint.
 
 Run:  uvicorn app.main:app --reload --port 8000
 """
@@ -15,8 +15,8 @@ settings = get_settings()
 store.init_store()
 
 app = FastAPI(
-    title="Sentinel — VZI Safety Intelligence (PoC backend)",
-    description="FastAPI gateway to Claude on Azure AI Foundry for the Sentinel safety agents, "
+    title="Zen-Sentinel — VZI Safety Intelligence (PoC backend)",
+    description="FastAPI gateway to Claude on Azure AI Foundry for the Zen-Sentinel safety agents, "
                 "with a JSON-backed Admin platform (config, integrations, audit trail).",
     version="0.1.0",
 )

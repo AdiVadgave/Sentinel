@@ -27,7 +27,7 @@ export interface Toast {
 
 let toastSeq = 0;
 
-interface SentinelState {
+interface ZenSentinelState {
   // auth / persona
   authed: boolean;
   role: Role | null;
@@ -65,7 +65,7 @@ interface SentinelState {
 const personaUser = (role: Role): User =>
   users.find((u) => u.role === role) ?? users[0];
 
-export const useStore = create<SentinelState>()(
+export const useStore = create<ZenSentinelState>()(
   persist(
     (set, get) => ({
       authed: false,
@@ -165,7 +165,7 @@ export const useStore = create<SentinelState>()(
         set((s) => ({ toasts: s.toasts.filter((x) => x.id !== id) })),
     }),
     {
-      name: "sentinel-poc",
+      name: "zen-sentinel-poc",
       // Persist demo-critical state; toasts are ephemeral.
       partialize: (s) => ({
         authed: s.authed,

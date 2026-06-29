@@ -81,7 +81,7 @@ def knowledge_answer_text(text: str) -> str:
 
 
 OUT_OF_DOMAIN = (
-    "Thanks for your question. I'm Sentinel, the point-of-work safety assistant for Black Mountain, "
+    "Thanks for your question. I'm Zen-Sentinel, the point-of-work safety assistant for Black Mountain, "
     "so I'm only able to help with workplace health and safety — SOPs, critical controls, permits, "
     "incident reporting and shift documentation. I'm not able to assist with that particular request, "
     "but I'm here whenever you have a safety question. Stay safe out there."

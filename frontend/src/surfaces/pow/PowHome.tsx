@@ -3,7 +3,7 @@ import { MessageSquare, ListChecks, AlertTriangle, FileBadge, Clock, ChevronRigh
 import { useStore } from "../../store/store";
 
 const tiles = [
-  { to: "/pow/ask", label: "Ask Sentinel", icon: MessageSquare, hero: true },
+  { to: "/pow/ask", label: "Ask Zen-Sentinel", icon: MessageSquare, hero: true },
   { to: "/pow/checklist", label: "Pre-Task Checklist", icon: ListChecks },
   { to: "/pow/report", label: "Report Near-Miss", icon: AlertTriangle },
   { to: "/pow/handover", label: "My Permits", icon: FileBadge },
@@ -36,7 +36,7 @@ export function PowHome() {
             <MessageSquare size={22} />
           </span>
           <span className="text-left">
-            <span className="block font-bold text-lg leading-tight">Ask Sentinel</span>
+            <span className="block font-bold text-lg leading-tight">Ask Zen-Sentinel</span>
             <span className="block text-xs text-blue-100">Plain-language safety guidance</span>
           </span>
           <ChevronRight className="ml-auto" />

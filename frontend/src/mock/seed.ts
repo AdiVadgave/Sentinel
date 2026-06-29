@@ -1,4 +1,4 @@
-// Sentinel PoC — seed "database" (mining-accurate, consistent IDs across screens).
+// Zen-Sentinel PoC — seed "database" (mining-accurate, consistent IDs across screens).
 // Black Mountain Deeps · Swartberg · Gamsberg Concentrator (Northern Cape, ZA).
 
 export type Role = "Worker" | "HSE Officer" | "HSE Manager" | "Admin";

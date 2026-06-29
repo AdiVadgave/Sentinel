@@ -1,24 +1,24 @@
-# Sentinel — Functionality Guide & Walkthrough
+# Zen-Sentinel — Functionality Guide & Walkthrough
 
-**Sentinel — VZI Safety Intelligence Platform**
+**Zen-Sentinel — VZI Safety Intelligence Platform**
 Client: Black Mountain Mine · Vedanta Zinc International (VZI) · Vendor: Zensar Technologies
 
-This document explains **what every part of Sentinel does**, **how each feature answers the
+This document explains **what every part of Zen-Sentinel does**, **how each feature answers the
 problem statement**, and **what each tab is for**. For concrete **"you type → the AI responds"**
 walkthroughs you can run live, see **[EXAMPLES.md](EXAMPLES.md)**. For installation and how to start
 the app, see [README.md](README.md).
 
 ---
 
-## 1. The Problem Statement (and how Sentinel answers it)
+## 1. The Problem Statement (and how Zen-Sentinel answers it)
 
-Vedanta's Scope of Work describes four recurring **execution gaps** in mine safety. Sentinel was
+Vedanta's Scope of Work describes four recurring **execution gaps** in mine safety. Zen-Sentinel was
 built so that, end-to-end, it closes all four — with a supervisor that orchestrates four specialist
 AI agents, and the HSE team always in control.
 
-| # | Execution gap (from the SoW) | How Sentinel answers it | Where in the app |
+| # | Execution gap (from the SoW) | How Zen-Sentinel answers it | Where in the app |
 |---|------------------------------|--------------------------|------------------|
-| 1 | **Safety knowledge isn't available at the point of work** | A worker asks a plain-language question on a phone and gets a grounded answer with the exact SOP, version and approval date | Worker → **Ask Sentinel** |
+| 1 | **Safety knowledge isn't available at the point of work** | A worker asks a plain-language question on a phone and gets a grounded answer with the exact SOP, version and approval date | Worker → **Ask Zen-Sentinel** |
 | 2 | **Documentation is inconsistent / incomplete** | AI auto-fills pre-task checklists, drafts ICAM investigations, and drafts shift handovers — workers/officers review and approve | Worker → **Pre-Task**, Officer → **Investigation**, **Shift Handover** |
 | 3 | **Incidents recur without systemic learning** | The intelligence agent surfaces recurring patterns across incidents and auto-writes a lesson-learned that gets published back to the knowledge base | Manager → **Recurring Patterns** |
 | 4 | **Operational data sits unused** | A dashboard turns incident/near-miss/checklist data into KPIs, a hazard heat-map and predictive early-warnings | Manager → **Safety Intelligence**, **Predictive** |
@@ -58,8 +58,8 @@ The agent endpoints (all behind `/api/agents/…`):
 
 | Endpoint | Agent | Used by |
 |----------|-------|---------|
-| `classify` | Supervisor — intent routing | Ask Sentinel routing strip |
-| `ask` / `ask/stream` | Knowledge & Risk — grounded, cited answer (streamed) | Ask Sentinel |
+| `classify` | Supervisor — intent routing | Ask Zen-Sentinel routing strip |
+| `ask` / `ask/stream` | Knowledge & Risk — grounded, cited answer (streamed) | Ask Zen-Sentinel |
 | `classify-report` | Incident intake classifier | Report Near-Miss |
 | `suggest-controls` | Knowledge & Risk — pre-task controls | Pre-Task Checklist |
 | `icam` | Incident Investigation — ICAM draft | Investigation |
@@ -103,10 +103,10 @@ You pick a persona at login; each lands on its own surface. Switch any time from
 
 #### Home
 - **Purpose:** the worker's launchpad "at the point of work" — proves safety is reachable on the ground.
-- **What it shows:** a greeting (shift/area), a big **Ask Sentinel** button, quick tiles (Pre-Task, Report, Permits, Handover), open tasks, and a "4 agents online · grounded answers only" trust strip.
+- **What it shows:** a greeting (shift/area), a big **Ask Zen-Sentinel** button, quick tiles (Pre-Task, Report, Permits, Handover), open tasks, and a "4 agents online · grounded answers only" trust strip.
 - **Problem solved:** #1 — knowledge at the point of work.
 
-#### Ask Sentinel  ⭐ *(the signature screen)*
+#### Ask Zen-Sentinel  ⭐ *(the signature screen)*
 - **Purpose:** ask a plain-language safety question and get a grounded, cited, plain-language answer.
 - **What happens:** you type or tap a suggested question → the **Supervisor strip** animates (Understanding → Intent 98% → Routing to Knowledge & Risk) → the answer **streams token-by-token** from Claude → it ends with **critical controls**, a **"before you start"** list, the applicable **standards**, a **source chip** (e.g. `SOP-WAH-014 · v3.2 · approved 12 Apr 2026`), and a **guardrail line**. Clicking the source chip opens a drawer with the SOP passage and version history.
 - **Problem solved:** #1, plus the trust promise (source + version citation) and proactive framing.
@@ -200,9 +200,9 @@ flow, live recurring-pattern analysis, AI-generated reports, the audit trail, an
 
 | Feature | Where | What it proves |
 |---------|-------|----------------|
-| **Source + version chip** | every Ask Sentinel answer | the answer came from a specific SOP at a specific version — no hallucination |
+| **Source + version chip** | every Ask Zen-Sentinel answer | the answer came from a specific SOP at a specific version — no hallucination |
 | **Standards list** | every answer / draft | benchmarked against MHSA, ISO 45001, ICMM, etc. |
-| **Guardrail line + off-domain refusal** | Ask Sentinel | the agent stays in the safety domain |
+| **Guardrail line + off-domain refusal** | Ask Zen-Sentinel | the agent stays in the safety domain |
 | **Human-in-the-loop gate** | Investigation | nothing is finalised without an HSE owner's sign-off |
 | **Audit log** | Admin → Audit Log | every AI answer & sign-off logged with source, version, user, POPIA class |
 | **POPIA classification** | Audit Log + generated reports / handover PDF | each record gets a server-side data-classification label (e.g. Internal C3 vs Confidential — personal C4) |
@@ -214,7 +214,7 @@ flow, live recurring-pattern analysis, AI-generated reports, the audit trail, an
 
 | I want to… | Persona → Tab |
 |------------|---------------|
-| Ask a safety question and get a cited answer | Worker → Ask Sentinel |
+| Ask a safety question and get a cited answer | Worker → Ask Zen-Sentinel |
 | Log a pre-task with AI-suggested controls | Worker → Pre-Task Checklist |
 | Report a near-miss and get it classified | Worker → Report Near-Miss |
 | Triage everything coming in | HSE Officer → Console Home |
@@ -231,5 +231,5 @@ flow, live recurring-pattern analysis, AI-generated reports, the audit trail, an
 
 ---
 
-*Prepared as the functionality guide for the Sentinel PoC. For setup and run instructions see
-[README.md](README.md); for the full design rationale see `Sentinel_PoC_Build_Bible.md`.*
+*Prepared as the functionality guide for the Zen-Sentinel PoC. For setup and run instructions see
+[README.md](README.md); for the full design rationale see `Zen-Sentinel_PoC_Build_Bible.md`.*

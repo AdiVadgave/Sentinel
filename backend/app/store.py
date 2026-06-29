@@ -1,4 +1,4 @@
-"""Lightweight JSON-file persistence for the Sentinel Admin platform.
+"""Lightweight JSON-file persistence for the Zen-Sentinel Admin platform.
 
 The agent endpoints are stateless, but the **Admin** surface (agent
 configuration, integrations, and the audit trail) is genuinely functional —

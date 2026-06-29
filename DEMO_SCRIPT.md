@@ -1,4 +1,4 @@
-# Sentinel — 15-Minute Demo Script
+# Zen-Sentinel — 15-Minute Demo Script
 
 Spoken narration, aligned to the live build and to [EXAMPLES.md](EXAMPLES.md).
 Before you start: confirm `http://localhost:8000/api/health` shows `"mode": "live (Claude on Foundry)"`.
@@ -7,10 +7,10 @@ Before you start: confirm `http://localhost:8000/api/health` shows `"mode": "liv
 
 ## Opening (~45 seconds)
 
-Good morning, everyone. Let me show you **Sentinel**, our safety intelligence platform for Black
+Good morning, everyone. Let me show you **Zen-Sentinel**, our safety intelligence platform for Black
 Mountain Mine. Today, mine safety has four problems: the knowledge exists, but not where the worker is
 standing; paperwork is filled differently by everyone; the same incidents keep coming back; and all the
-safety data just sits there, unused. Sentinel solves all four — with **four AI agents working under one
+safety data just sits there, unused. Zen-Sentinel solves all four — with **four AI agents working under one
 supervisor**, and your **HSE team always in control**.
 
 I'll sign in with **Microsoft Entra ID** — the same company login you already use. Notice the
@@ -22,7 +22,7 @@ Now it asks me which role to enter as.
 ## The Worker (~2 minutes)
 
 Let me start as a **worker on the ground**. This is their phone, right at the point of work. I'll tap
-**"Ask Sentinel"** and ask a real question — *"Can I work at heights near the Swartberg conveyor
+**"Ask Zen-Sentinel"** and ask a real question — *"Can I work at heights near the Swartberg conveyor
 today?"*
 
 Watch the top of the screen. The **Supervisor understands the question and routes it to the right
@@ -38,7 +38,7 @@ safety only.
 From this answer, the worker taps **"Start pre-task checklist,"** and the form fills itself — worker,
 crew, shift, area, permit — all pulled automatically. Less typing means fewer mistakes. I'll **confirm
 the critical control that applies — working at heights** — and I can even tap **"AI suggest controls,"**
-and Sentinel writes the exact controls to confirm, grounded in the SOP. I'll submit it.
+and Zen-Sentinel writes the exact controls to confirm, grounded in the SOP. I'll submit it.
 
 And now the magic: **that checklist instantly appears in the HSE officer's console.** What happens on
 the ground is visible to the whole team in real time.
@@ -74,13 +74,13 @@ Now the **leadership view.** Again, one centralised view — nothing is missed, 
 single place. We have the real numbers up top — **incidents this month, near-miss ratio, overdue
 actions, and how current our procedures are.**
 
-But look at this **red cell on the map** — it's glowing because **Sentinel spotted a pattern people
+But look at this **red cell on the map** — it's glowing because **Zen-Sentinel spotted a pattern people
 kept missing: four dropped-object near-misses at the same crusher in 90 days, all with the same root
 cause.** And the intelligence agent has **just written the lesson learned** — including a concrete,
 higher-order fix to stop it recurring. With **one click I publish it to everyone.** That's how we stop
 the same incident from repeating.
 
-Sentinel also **warns us before things break.** This shovel, **EX-204, needs inspection within 72
+Zen-Sentinel also **warns us before things break.** This shovel, **EX-204, needs inspection within 72
 hours**, and one click turns that warning into a **tracked maintenance action.** And when I need to
 report up, I **generate a board-ready report in seconds** — fully sourced and POPIA-classified.
 
@@ -93,7 +93,7 @@ Maintenance, and Entra ID.** These agents can be **configured and governed centr
 which are switched on. And the **audit log records every single AI answer and every sign-off**: who did
 it, what they did, and which **document and version** it used. **Fully traceable.**
 
-So that is **Sentinel** — four agents, one supervisor, your team always in control. The **right safety
+So that is **Zen-Sentinel** — four agents, one supervisor, your team always in control. The **right safety
 information at the point of work**, and **one centralised view where nothing is missed and everything is
 tracked in a single place.** And everything you saw today runs on the **real architecture** — in
 production, the same screens simply connect to your live systems.
