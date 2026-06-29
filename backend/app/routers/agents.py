@@ -330,7 +330,7 @@ def lesson(req: LessonRequest) -> dict:
     return _json_agent(
         LESSON_SYSTEM, user,
         lambda: fallback.lesson_learned(req.area, req.hazard, req.count),
-        max_tokens=700,
+        max_tokens=900,
         agent_id="incident-intelligence",
     )
 

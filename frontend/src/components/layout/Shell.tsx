@@ -109,13 +109,6 @@ function TopBar() {
 
   return (
     <header className="h-14 shrink-0 bg-white border-b border-slate-200 flex items-center gap-3 px-4">
-      <div className="relative flex-1 max-w-md">
-        <Icons.Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-        <input
-          placeholder="Search SOPs, incidents, assets…"
-          className="w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30"
-        />
-      </div>
       <div className="ml-auto flex items-center gap-3">
         {/* Notification bell */}
         <div className="relative">

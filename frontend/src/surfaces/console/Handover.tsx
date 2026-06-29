@@ -3,7 +3,7 @@ import { Sparkles, FileDown, Send } from "lucide-react";
 import { useStore } from "../../store/store";
 import { Card, SectionHeader, Button, Dialog, Chip } from "../../components/ui/ui";
 import { ProgressArc } from "../../components/charts/Charts";
-import { api, isDisabled } from "../../lib/api";
+import { api, isDisabled, workflow } from "../../lib/api";
 
 const pulled = [
   { label: "Open work orders", value: "4" },
@@ -16,6 +16,9 @@ const pulled = [
 export function Handover() {
   const [completeness, setCompleteness] = useState(62);
   const [summary, setSummary] = useState("");
+  const [outgoing, setOutgoing] = useState("Night Shift Supervisor");
+  const [incoming, setIncoming] = useState("Day Shift · C-Shift");
+  const [sending, setSending] = useState(false);
   const [pdfOpen, setPdfOpen] = useState(false);
   const pushToast = useStore((s) => s.pushToast);
 
@@ -50,6 +53,29 @@ export function Handover() {
     pushToast({ title: "Summary drafted by Shift Handover agent", variant: "info" });
   };
 
+  const sendToNext = async () => {
+    if (!summary.trim()) {
+      pushToast({ title: "Draft a summary first", detail: "Use 'AI draft summary' or write one.", variant: "warn" });
+      return;
+    }
+    setSending(true);
+    try {
+      await workflow.sendHandover({
+        outgoing,
+        incoming,
+        area: "Black Mountain",
+        summary,
+        flagged: 2,
+        outstandingActions: 5,
+        sentBy: outgoing,
+      });
+      pushToast({ title: `Handover sent to ${incoming}`, detail: "Now visible on the worker's My Shift screen.", variant: "success" });
+    } catch {
+      pushToast({ title: "Could not send handover", detail: "Is the backend running on :8000?", variant: "error" });
+    }
+    setSending(false);
+  };
+
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <SectionHeader title="Shift Handover" subtitle="Auto-pulled from operational data · AI-assisted completeness" />
@@ -78,8 +104,8 @@ export function Handover() {
 
       <Card className="p-4 mt-5">
         <div className="grid sm:grid-cols-2 gap-4">
-          <Labeled label="Outgoing supervisor"><Input defaultValue="Sanjay Kapoor · Day Shift" /></Labeled>
-          <Labeled label="Incoming supervisor"><Input defaultValue="Night Shift Supervisor" /></Labeled>
+          <Labeled label="Outgoing supervisor"><Input value={outgoing} onChange={(e) => setOutgoing(e.target.value)} /></Labeled>
+          <Labeled label="Incoming supervisor"><Input value={incoming} onChange={(e) => setIncoming(e.target.value)} /></Labeled>
         </div>
 
         <div className="mt-4">
@@ -92,8 +118,8 @@ export function Handover() {
 
         <div className="mt-4 flex gap-2">
           <Button onClick={() => setPdfOpen(true)}><FileDown size={16} /> Generate handover PDF</Button>
-          <Button variant="success" onClick={() => pushToast({ title: "Handover sent · Night Shift acknowledged", variant: "success" })}>
-            <Send size={16} /> Send to next shift
+          <Button variant="success" onClick={sendToNext} disabled={sending}>
+            <Send size={16} /> {sending ? "Sending…" : "Send to next shift"}
           </Button>
         </div>
       </Card>
@@ -109,8 +135,8 @@ export function Handover() {
               <Chip tone="slate">POPIA · Internal (C3)</Chip>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-              <div><span className="text-slate-500">Outgoing:</span> Sanjay Kapoor</div>
-              <div><span className="text-slate-500">Incoming:</span> Night Shift</div>
+              <div><span className="text-slate-500">Outgoing:</span> {outgoing}</div>
+              <div><span className="text-slate-500">Incoming:</span> {incoming}</div>
             </div>
             <p className="mt-4 text-sm text-navy-800 leading-relaxed">{summary || "No summary captured."}</p>
             <div className="mt-6 grid grid-cols-3 gap-3">

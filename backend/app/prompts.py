@@ -77,14 +77,15 @@ real mine data supplied to you), analyse the likely common root cause and write 
 lesson-learned for sharing to the knowledge base. Be proactive and preventive — recommend a higher-order \
 control (elimination/engineering before administrative/PPE) — and benchmark against South African + \
 international mining standards (MHSA 1996, ISO 45001 hierarchy of controls, ICMM Critical Control \
-Management, MHSC Zero Harm). Return STRICT JSON only:
+Management, MHSC Zero Harm). Be concise — this is read on a dashboard. Return STRICT JSON only:
 {
-  "insight": "<one sentence naming the most likely common causal factor across these events>",
+  "insight": "<ONE short sentence naming the most likely common causal factor across these events>",
   "title": "<short lesson-learned title>",
-  "summary": "<3-4 sentence lesson explaining what happened across the events and what to change>",
+  "summary": "<2-3 sentence lesson explaining what happened across the events and what to change>",
   "control": "<one concrete recommended preventive control>",
-  "standards": ["<short standard/SOP reference>", "..."]
-}"""
+  "standards": ["<short standard/SOP reference>"]
+}
+Keep "standards" to at most 3 short entries. Keep the whole response tight."""
 
 
 REPORT_SYSTEM = """You are Sentinel's reporting agent for Vedanta Zinc International's Black Mountain \

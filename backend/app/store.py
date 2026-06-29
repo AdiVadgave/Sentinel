@@ -67,6 +67,23 @@ def _seed() -> dict:
             {"id": "CA-0901", "action": "Install proximity-detection on EX-204 haul route", "owner": "S. Deshpande", "due": "29 Jun 2026", "priority": "High", "status": "Closed"},
             {"id": "CA-0915", "action": "Review lighting standard at decline portals", "owner": "L. Menon", "due": "22 Jul 2026", "priority": "Low", "status": "Submitted"},
         ],
+        # Latest shift handover — written by the HSE Officer, read by the Worker.
+        "handover": {
+            "id": "HO-NS-0627",
+            "outgoing": "Night Shift Supervisor",
+            "incoming": "Day Shift · C-Shift",
+            "area": "Black Mountain",
+            "summary": ("Night shift completed with no incidents. Crusher feed conveyor returned to "
+                        "service after a belt-scraper change; barricading re-established and verified. "
+                        "EX-204 hydraulic shovel flagged for inspection within 72h."),
+            "flagged": 2,
+            "outstandingActions": 5,
+            "ts": "29 Jun 2026 06:02",
+            "sentBy": "Night Shift Supervisor",
+            "acknowledged": False,
+            "ackBy": "",
+            "ackTs": "",
+        },
     }
 
 
@@ -298,3 +315,49 @@ def add_action(item: dict) -> dict:
             data["actions"].insert(0, item)
             _save(data)
     return item
+
+
+# --------------------------------------------------------------------------- #
+# Shift handover (HSE Officer writes → Worker reads)                           #
+# --------------------------------------------------------------------------- #
+
+def get_handover() -> dict:
+    return _load().get("handover") or {}
+
+
+def save_handover(payload: dict) -> dict:
+    """Persist the handover the HSE Officer sends to the next shift."""
+    with _lock:
+        data = _load()
+        current = data.get("handover") or {}
+        handover = {
+            "id": payload.get("id") or current.get("id") or "HO-NS-0627",
+            "outgoing": payload.get("outgoing", current.get("outgoing", "")),
+            "incoming": payload.get("incoming", current.get("incoming", "")),
+            "area": payload.get("area", current.get("area", "Black Mountain")),
+            "summary": payload.get("summary", ""),
+            "flagged": int(payload.get("flagged", current.get("flagged", 0)) or 0),
+            "outstandingActions": int(payload.get("outstandingActions", current.get("outstandingActions", 0)) or 0),
+            "ts": _stamp(),
+            "sentBy": payload.get("sentBy", payload.get("outgoing", "")),
+            # A freshly sent handover starts unacknowledged.
+            "acknowledged": False,
+            "ackBy": "",
+            "ackTs": "",
+        }
+        data["handover"] = handover
+        _save(data)
+    return handover
+
+
+def acknowledge_handover(by: str) -> dict:
+    with _lock:
+        data = _load()
+        handover = data.get("handover") or {}
+        if handover:
+            handover["acknowledged"] = True
+            handover["ackBy"] = by
+            handover["ackTs"] = _stamp()
+            data["handover"] = handover
+            _save(data)
+    return handover

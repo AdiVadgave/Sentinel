@@ -140,6 +140,21 @@ export interface CorrectiveActionDTO {
   status: string;
 }
 
+export interface HandoverDTO {
+  id: string;
+  outgoing: string;
+  incoming: string;
+  area: string;
+  summary: string;
+  flagged: number;
+  outstandingActions: number;
+  ts: string;
+  sentBy?: string;
+  acknowledged: boolean;
+  ackBy: string;
+  ackTs: string;
+}
+
 export const workflow = {
   listWork: () => fetch("/api/work").then((r) => r.json() as Promise<WorkItemDTO[]>),
   addWork: (item: WorkItemDTO) => send<WorkItemDTO>("/api/work", "POST", item),
@@ -147,6 +162,9 @@ export const workflow = {
     send<WorkItemDTO>(`/api/work/${id}`, "PATCH", { status }),
   listActions: () => fetch("/api/actions").then((r) => r.json() as Promise<CorrectiveActionDTO[]>),
   addAction: (item: CorrectiveActionDTO) => send<CorrectiveActionDTO>("/api/actions", "POST", item),
+  getHandover: () => fetch("/api/handover").then((r) => r.json() as Promise<HandoverDTO>),
+  sendHandover: (h: Partial<HandoverDTO>) => send<HandoverDTO>("/api/handover", "POST", h),
+  ackHandover: (by: string) => send<HandoverDTO>("/api/handover/ack", "POST", { by }),
 };
 
 // --- Analytics KPIs (computed server-side from the stored work queue) ------ //

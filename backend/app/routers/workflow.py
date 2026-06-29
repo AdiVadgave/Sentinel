@@ -77,6 +77,40 @@ def post_action(body: ActionBody) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# Shift handover — Officer sends → Worker receives                            #
+# --------------------------------------------------------------------------- #
+
+class HandoverBody(BaseModel):
+    id: str | None = None
+    outgoing: str = ""
+    incoming: str = ""
+    area: str = "Black Mountain"
+    summary: str = ""
+    flagged: int = 0
+    outstandingActions: int = 0
+    sentBy: str = ""
+
+
+class AckBody(BaseModel):
+    by: str = ""
+
+
+@router.get("/handover")
+def get_handover() -> dict:
+    return store.get_handover()
+
+
+@router.post("/handover")
+def post_handover(body: HandoverBody) -> dict:
+    return store.save_handover(body.model_dump())
+
+
+@router.post("/handover/ack")
+def ack_handover(body: AckBody) -> dict:
+    return store.acknowledge_handover(body.by or "Worker")
+
+
+# --------------------------------------------------------------------------- #
 # Analytics — KPIs computed from the persisted work queue / actions / audit   #
 # --------------------------------------------------------------------------- #
 
