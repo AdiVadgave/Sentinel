@@ -28,6 +28,9 @@ router = APIRouter(prefix="/api/agents", tags=["agents"])
 
 class AskRequest(BaseModel):
     message: str
+    # Optional route already decided by the Supervisor (/classify) on the client,
+    # so the stream honours the same decision instead of re-guessing with keywords.
+    route: str | None = None
 
 
 class IcamRequest(BaseModel):
@@ -159,7 +162,7 @@ def ask(req: AskRequest) -> dict:
     if not store.agent_enabled("knowledge-risk"):
         return _disabled_notice("knowledge-risk")
     settings = get_settings()
-    route = fallback.classify(req.message)["route"]
+    route = req.route or fallback.classify(req.message)["route"]
     if route == "out-of-domain":
         return {"refused": True, "message": fallback.OUT_OF_DOMAIN}
     if settings.azure_ready:
@@ -179,26 +182,28 @@ def ask(req: AskRequest) -> dict:
     return answer
 
 
-def _source_from_text(text: str, message: str) -> dict:
-    """Build the source chip from the SOP the model ACTUALLY cited in its answer.
+def _source_from_text(text: str) -> dict | None:
+    """Return the SOP the model ACTUALLY cited in its answer, or None.
 
-    Scans the streamed text for a known SOP id and returns that SOP's authoritative
-    version/approval metadata. Falls back to the heuristic picker only if the model
-    didn't name a SOP we recognise — so the citation reflects the model, not a guess.
+    Scans the streamed text for a known SOP id. Returns None if the model didn't
+    cite a SOP we recognise (e.g. a refusal or an off-domain reply) — so we never
+    attach a spurious source chip to an answer that has no real citation.
     """
     for match in re.findall(r"SOP-[A-Z]{2,5}-\d{3}", text):
         sop = SOPS_BY_ID.get(match)
         if sop:
             return {"id": sop["id"], "title": sop["title"],
                     "version": sop["version"], "approved": sop["approved"]}
-    return fallback.knowledge_answer(message)["source"]
+    return None
 
 
 @router.post("/ask/stream")
 def ask_stream(req: AskRequest) -> StreamingResponse:
     """Knowledge & Risk agent: token-by-token SSE stream (the live-LLM feel)."""
     settings = get_settings()
-    route = fallback.classify(req.message)["route"]
+    # Trust the Supervisor's classification (passed from the client) so the stream
+    # and the routing strip agree; fall back to a keyword guess only if absent.
+    route = req.route or fallback.classify(req.message)["route"]
     kr_enabled = store.agent_enabled("knowledge-risk")
 
     def event(payload: dict) -> str:
@@ -236,9 +241,11 @@ def ask_stream(req: AskRequest) -> StreamingResponse:
                 ]):
                     full.append(delta)
                     yield event({"type": "token", "text": delta})
-                # Cite the SOP the model actually referenced in its answer.
-                src = _source_from_text("".join(full), req.message)
-                yield event({"type": "source", "source": src})
+                # Only cite a source the model actually referenced — no SOP id in
+                # the answer (e.g. a refusal) means no source chip.
+                src = _source_from_text("".join(full))
+                if src:
+                    yield event({"type": "source", "source": src})
                 yield event({"type": "done", "mode": "azure"})
                 return
             except Exception as exc:  # noqa: BLE001

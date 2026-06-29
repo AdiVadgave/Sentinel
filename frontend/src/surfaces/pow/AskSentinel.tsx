@@ -50,24 +50,28 @@ export function AskSentinel() {
     // small delay so the routing animation plays before the answer streams
     await new Promise((r) => setTimeout(r, 1700));
 
-    // 2) Knowledge & Risk streams the grounded answer.
+    // 2) Knowledge & Risk streams the grounded answer (honouring the Supervisor's route).
+    let refused = false;
     await askStream(text, {
       onToken: (tok) =>
         setTurns((t) => t.map((x) => (x.id === agentId ? { ...x, text: x.text + tok } : x))),
       onSource: (src) =>
         setTurns((t) => t.map((x) => (x.id === agentId ? { ...x, source: src } : x))),
-      onRefused: () =>
-        setTurns((t) => t.map((x) => (x.id === agentId ? { ...x, refused: true } : x))),
+      onRefused: () => {
+        refused = true;
+        setTurns((t) => t.map((x) => (x.id === agentId ? { ...x, refused: true } : x)));
+      },
       onDone: () => {
         setTurns((t) => t.map((x) => (x.id === agentId ? { ...x, streaming: false } : x)));
         setBusy(false);
+        const offDomain = refused || routing?.route === "out-of-domain";
         logAudit({
           user: user.name,
-          agent: "Knowledge & Risk",
+          agent: offDomain ? "Supervisor" : "Knowledge & Risk",
           action: `Asked: ${text.slice(0, 48)}`,
-          source: "SOP-WAH-014 v3.2",
+          source: offDomain ? "—" : "VZI SOP corpus",
           popia: "Internal (C3)",
-          outcome: "Answered + cited",
+          outcome: offDomain ? "Refused — out of safety domain" : "Answered + cited",
         });
       },
       onError: () => {
@@ -76,7 +80,7 @@ export function AskSentinel() {
         );
         setBusy(false);
       },
-    });
+    }, routing?.route);
   };
 
   return (
@@ -113,7 +117,7 @@ export function AskSentinel() {
                     <StreamedAnswer text={t.text} streaming={!!t.streaming} />
                   )}
 
-                  {t.source && !t.streaming && (
+                  {t.source && !t.streaming && !t.refused && (
                     <SourceChip source={t.source} onOpen={() => { setDrawerSrc(t.source!); setDrawerOpen(true); }} />
                   )}
 

@@ -41,7 +41,7 @@ SOPS: list[dict] = [
         "title": "Lockout / Tagout — Energy Isolation",
         "version": "v4.0",
         "approved": "28 Feb 2026",
-        "owner": "S. Kapoor",
+        "owner": "P. van Wyk",
         "source": "SharePoint › HSE › SOPs › SOP-LOTO-007.pdf",
         "critical_controls": [
             "Identify and isolate ALL energy sources (electrical, hydraulic, pneumatic, gravitational).",
@@ -68,7 +68,7 @@ SOPS: list[dict] = [
         "title": "Confined Space Entry",
         "version": "v2.3",
         "approved": "15 Mar 2026",
-        "owner": "P. Verma",
+        "owner": "N. Dlamini",
         "source": "SharePoint › HSE › SOPs › SOP-CS-009.pdf",
         "critical_controls": [
             "Confined-space entry permit issued; atmosphere tested (O2, LEL, CO, H2S) before and during entry.",
@@ -94,7 +94,7 @@ SOPS: list[dict] = [
         "title": "Dropped-Object Prevention",
         "version": "v2.0",
         "approved": "05 May 2026",
-        "owner": "L. Menon",
+        "owner": "L. Mokoena",
         "source": "SharePoint › HSE › SOPs › SOP-DOP-005.pdf",
         "critical_controls": [
             "Tool tethering for all work at height.",
@@ -119,7 +119,7 @@ SOPS: list[dict] = [
         "title": "Mobile Equipment Operation",
         "version": "v1.8",
         "approved": "11 Jan 2026",
-        "owner": "S. Kapoor",
+        "owner": "P. van Wyk",
         "source": "SharePoint › HSE › SOPs › SOP-ME-021.pdf",
         "critical_controls": [
             "Pre-use inspection completed and logged before operation.",

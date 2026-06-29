@@ -99,7 +99,7 @@ it opens **Investigation** → wait for the draft → optionally edit a correcti
 
 **Sentinel responds:** a full **ICAM** draft —
 - **Timeline** of the event, **absent / failed defences** (barricading not re-established; tools not tethered), individual/team actions, task/environmental conditions, organisational factors,
-- ranked **causal factors**, and **corrective actions** (e.g. *add re-barricading verification to permit close-out — owner L. Menon, High*).
+- ranked **causal factors**, and **corrective actions** (e.g. *add re-barricading verification to permit close-out — owner L. Mokoena, High*).
 - On sign-off: the banner turns green *"Signed off by <you> · <timestamp> · logged to audit"*, an audit entry is written, and the incident is pushed to Incident Intelligence.
 
 *ICAM = **Incident Cause Analysis Method** — the structured, layered investigation framework the agent is aligned to (SOP-INV-002 v2.1).*

@@ -274,17 +274,25 @@ export interface StreamHandlers {
 }
 
 // Reads the SSE stream from /api/agents/ask/stream and dispatches events.
-export async function askStream(message: string, h: StreamHandlers): Promise<void> {
+export async function askStream(message: string, h: StreamHandlers, route?: string): Promise<void> {
   try {
     const res = await fetch("/api/agents/ask/stream", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message, route }),
     });
     if (!res.body) throw new Error("No stream body");
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
+    // Ensure onDone fires exactly once (the "done" event AND the end-of-stream
+    // both used to call it → duplicate audit entries).
+    let finished = false;
+    const finish = (mode?: string) => {
+      if (finished) return;
+      finished = true;
+      h.onDone?.(mode);
+    };
     for (;;) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -316,12 +324,12 @@ export async function askStream(message: string, h: StreamHandlers): Promise<voi
             h.onRefused?.();
             break;
           case "done":
-            h.onDone?.(evt.mode);
+            finish(evt.mode);
             break;
         }
       }
     }
-    h.onDone?.();
+    finish();
   } catch (err) {
     h.onError?.(err);
   }

@@ -80,8 +80,12 @@ def knowledge_answer_text(text: str) -> str:
     )
 
 
-OUT_OF_DOMAIN = ("I can only help with VZI safety guidance — SOPs, critical controls, permits, "
-                 "incidents and shift documentation. Please ask your HSE officer for anything else.")
+OUT_OF_DOMAIN = (
+    "Thanks for your question. I'm Sentinel, the point-of-work safety assistant for Black Mountain, "
+    "so I'm only able to help with workplace health and safety — SOPs, critical controls, permits, "
+    "incident reporting and shift documentation. I'm not able to assist with that particular request, "
+    "but I'm here whenever you have a safety question. Stay safe out there."
+)
 
 
 def classify_report(text: str, area: str = "") -> dict:
@@ -212,11 +216,11 @@ def icam_draft(incident: dict) -> dict:
         ],
         "corrective_actions": [
             {"action": "Add mandatory re-barricading verification to permit close-out.",
-             "owner": "L. Menon", "due": "11 Jul 2026", "priority": "High"},
+             "owner": "L. Mokoena", "due": "11 Jul 2026", "priority": "High"},
             {"action": "Issue tethered-tool kits to all crusher maintenance crews.",
-             "owner": "S. Kapoor", "due": "18 Jul 2026", "priority": "High"},
+             "owner": "P. van Wyk", "due": "18 Jul 2026", "priority": "High"},
             {"action": "Toolbox talk on dropped-object prevention at " + area + ".",
-             "owner": "P. Verma", "due": "04 Jul 2026", "priority": "Medium"},
+             "owner": "N. Dlamini", "due": "04 Jul 2026", "priority": "Medium"},
         ],
         "alignment": "Aligned to ICAM SOP-INV-002 v2.1",
     }

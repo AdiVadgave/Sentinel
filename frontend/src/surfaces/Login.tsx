@@ -83,7 +83,7 @@ export function Login() {
           </div>
         </div>
         <div className="relative text-xs text-blue-300/70">
-          Zensar Technologies × Vedanta Zinc International · Black Mountain Mine · POPIA Internal (C3)
+          Zensar Technologies · POPIA Internal (C3)
         </div>
       </div>
 
