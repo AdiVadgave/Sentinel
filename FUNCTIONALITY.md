@@ -4,9 +4,9 @@
 Client: Black Mountain Mine · Vedanta Zinc International (VZI) · Vendor: Zensar Technologies
 
 This document explains **what every part of Sentinel does**, **how each feature answers the
-problem statement**, **what each tab is for**, and gives **concrete "you type → the AI responds"
-examples** you can run live in the demo. For installation and how to start the app, see
-[README.md](README.md).
+problem statement**, and **what each tab is for**. For concrete **"you type → the AI responds"**
+walkthroughs you can run live, see **[EXAMPLES.md](EXAMPLES.md)**. For installation and how to start
+the app, see [README.md](README.md).
 
 ---
 
@@ -64,7 +64,23 @@ The agent endpoints (all behind `/api/agents/…`):
 | `suggest-controls` | Knowledge & Risk — pre-task controls | Pre-Task Checklist |
 | `icam` | Incident Investigation — ICAM draft | Investigation |
 | `handover-summary` | Shift Handover — draft summary | Shift Handover |
+| `lesson` | Incident Intelligence — recurring-pattern analysis + lesson | Recurring Patterns |
 | `report` | Reporting agent — board-ready reports | Reports |
+
+### The demo is genuinely stateful (a persisted backend store)
+
+Beyond the agents, the backend keeps **real, shared state** in a JSON store — so what one persona does
+is seen by the others, and survives a page reload (it isn't just each browser's localStorage):
+
+| Endpoint(s) | What it backs |
+|-------------|---------------|
+| `GET/POST /api/work`, `PATCH /api/work/{id}` | The cross-surface **work queue** (Worker reports → Console → Approvals → Dashboard) |
+| `GET/POST /api/actions` | Corrective actions |
+| `GET/POST /api/handover`, `POST /api/handover/ack` | The **shift handover** (HSE Officer sends → Worker receives & acknowledges) |
+| `GET /api/analytics/kpis` | Dashboard KPIs **computed live** from the stored work queue/actions/audit |
+| `/api/admin/*` | Agent enable/disable, confidence threshold, users, integrations, **audit trail** (with server-side POPIA classification) |
+
+Agent toggles are **server-enforced**: turning an agent off in Admin actually disables that endpoint.
 
 ---
 
@@ -106,7 +122,9 @@ You pick a persona at login; each lands on its own surface. Switch any time from
 - **Problem solved:** #2 and feeds #3.
 
 #### My Shift
-- **Purpose:** the worker's permits + handover acknowledgement view. (Static/clickable; not an AI screen.)
+- **Purpose:** the worker's permits + the **shift handover they actually received**.
+- **What happens:** on open it pulls the latest handover **the HSE Officer sent** from the backend and shows the real summary text, who it's from/to, the timestamp, and the flagged-equipment / outstanding-action counts. **Acknowledge handover** records who acknowledged and when, and the card flips to "Acknowledged by …". (This is the receiving end of the cross-surface handover flow — see the Officer's Shift Handover below.)
+- **Problem solved:** #2 — closes the documentation loop between shifts.
 
 ---
 
@@ -125,8 +143,9 @@ You pick a persona at login; each lands on its own surface. Switch any time from
 - **Purpose:** make the workflow engine *visible* as a four-column Kanban (Submitted → Under Review → Approved → Closed). Clicking a card advances it; state persists and writes to the audit log. Cards show the owning agent and an "AI-drafted / human-approved" tag.
 
 #### Shift Handover
-- **Purpose:** AI-assisted handover with a **completeness meter** (animates 62% → 94%) and auto-pulled operational context (open work orders, permits, flagged equipment, outstanding actions). **"AI draft summary"** calls the model to write the handover narrative for the incoming supervisor; you can generate a branded PDF preview.
-- **Problem solved:** #2 — documentation quality and completeness.
+- **Purpose:** AI-assisted handover with a **completeness meter** (animates 62% → 94%) and auto-pulled operational context (open work orders, permits, flagged equipment, outstanding actions).
+- **What happens:** **"AI draft summary"** calls the model to write the handover narrative for the incoming supervisor (editable). **"Send to next shift"** then **persists it to the backend** — and it appears on the Worker's **My Shift** screen for them to read and acknowledge. You can also generate a branded PDF preview.
+- **Problem solved:** #2 — documentation quality, completeness, and a closed officer→worker loop.
 
 #### Knowledge Base
 - **Purpose:** the configured safety knowledge base (SOPs + standards) with version control and a **"Regulatory standard updated — 3 SOPs need review"** alert. Opening a document shows an AI summary, version history and a deep-link to ask about it.
@@ -141,7 +160,8 @@ You pick a persona at login; each lands on its own surface. Switch any time from
 - **Problem solved:** #4 — data underutilised.
 
 #### Recurring Patterns & Lessons Learned  ⭐
-- **Purpose:** systemic learning (#3). An insight card — *"4 dropped-object near-misses at the Gamsberg crusher in 90 days — common factor: barricading not re-established after maintenance"* — plus an **AI-generated lesson-learned** with a recommended control and a **"Publish to Knowledge Base"** button.
+- **Purpose:** systemic learning (#3). The pattern *data* is mock (4 dropped-object near-misses at the Gamsberg crusher in 90 days, with the related incident IDs), but the **common-factor analysis and the lesson-learned are generated live** by the Incident Intelligence agent — including a recommended higher-order control (the model often proposes an engineering-level DROPS scheme, not just "re-barricade") and the standards it benchmarked against. A **"Live"** chip confirms it came from the model; **"Publish to Knowledge Base"** shares it.
+- **How it renders:** the seeded lesson shows instantly, then the live analysis swaps in a few seconds later (no blank loader).
 - **Problem solved:** #3 — recurring incidents without learning.
 
 #### Predictive Early-Warning
@@ -169,123 +189,10 @@ You pick a persona at login; each lands on its own surface. Switch any time from
 
 ## 5. Examples — "you type, the AI responds"
 
-These are real interactions. Sign in, pick the persona shown, and try them. (Exact wording from Claude
-will vary; the **shape** — grounding, citation, standards, guardrail — is consistent.)
-
-> **Tip:** the **source/version chip**, the **standards list**, and the **guardrail line** are the
-> features to point at in a demo. They're what make the answer trustworthy rather than a chatbot guess.
-
----
-
-### Example 1 — Ask Sentinel (Worker): working at heights
-**Persona:** Worker → **Ask Sentinel**
-**You type / tap:**
-> *"Can I work at heights near the Swartberg conveyor today?"*
-
-**Sentinel responds (streamed):**
-- Supervisor strip: `Understanding… → Intent: point-of-work guidance (98%) → Routing to Knowledge & Risk`
-- A plain-language answer: *yes, provided the working-at-heights critical controls are verified first…*
-- **Critical controls:** fall-arrest harness clipped to a certified anchor; edge protection/barricading; WAH permit signed; exclusion zone below; weather check (work suspended >40 km/h wind).
-- **Standards:** MHSA 1996 s11 (risk assessment), ISO 45001 (hierarchy of controls), ICMM Critical Control Management.
-- **Source chip:** `SOP-WAH-014 · Working at Heights · v3.2 · approved 12 Apr 2026`
-- **Guardrail:** *"Grounded in VZI SOPs + SA/international standards. Human sign-off required for any deviation."*
-
----
-
-### Example 2 — Ask Sentinel (Worker): a question you typed by hand
-**Persona:** Worker → **Ask Sentinel**
-**You type:**
-> *"Is it safe to enter the sump for cleaning during night shift?"*
-
-**Sentinel responds:**
-- Recognises this as **confined-space entry** (one of the highest-risk tasks) and notes the night shift doesn't change the requirements.
-- Critical controls: confined-space permit; continuous atmosphere testing (O₂, LEL, CO, H₂S); forced ventilation; standby attendant; rescue plan — and isolate the sump pumps via LOTO first.
-- **Source:** `SOP-CS-009 · Confined Space Entry · v2.3`, cross-referencing `SOP-LOTO-007`.
-- **Standards:** MHSA 1996 s23 (right to refuse dangerous work), ISO 45001, ICMM CCM.
-
-*(This is the key proof that it's a real model: a free-text question it has never seen gets a reasoned,
-correctly-routed, cited answer — not a canned reply.)*
-
----
-
-### Example 3 — Ask Sentinel (Worker): mobile equipment
-**Persona:** Worker → **Ask Sentinel**
-**You type:**
-> *"Do I need a spotter when reversing the dump truck near the workshop?"*
-
-**Sentinel responds:** *Yes — a spotter (banksman) is required for pedestrian-vehicle interaction in
-workshop areas; be in direct communication before reversing…* — cited to `SOP-ME-021 · Mobile Equipment`.
-
----
-
-### Example 4 — Guardrail (Worker): off-domain question
-**Persona:** Worker → **Ask Sentinel**
-**You type:**
-> *"Who won the cricket last night?"*
-
-**Sentinel responds:**
-> *"I can only help with VZI safety guidance — SOPs, critical controls, permits, incidents and shift
-> documentation. Please ask your HSE officer for anything else."*
-
-*(Proves the guardrails are real, not decorative.)*
-
----
-
-### Example 5 — Report a near-miss (Worker): AI classification
-**Persona:** Worker → **Report Near-Miss**
-**You enter:** Type = *Near-Miss*, Area = *Black Mountain Deeps*, Description =
-> *"A worker slipped on spilled hydraulic oil near the decline portal, no injury."*
-
-**Sentinel responds (on submit):**
-- **Category:** Slip/Trip
-- **Suggested control:** immediate spill containment + absorbent application, and a hydraulic
-  hose/fitting inspection regime on mobile equipment transiting the portal to find the leak source.
-- **Severity:** Medium · **Similar events (90 days):** 3
-- The report appears in the HSE Console queue as **Submitted**.
-
----
-
-### Example 6 — Pre-Task controls (Worker): AI suggest
-**Persona:** Worker → **Pre-Task Checklist**
-**You do:** tick the hazards (e.g. *working at heights*, *dropped objects*) → click **AI suggest controls**.
-
-**Sentinel responds:** a concise controls-confirmation paragraph grounded in `SOP-WAH-014` and the
-hierarchy of controls (inspect harness/tags, verify barricading and re-establish after breaks, tether
-tools, confirm permit) plus the standards it relied on.
-
----
-
-### Example 7 — ICAM investigation (HSE Officer): AI draft + sign-off
-**Persona:** HSE Officer → **Console Home** → open the **dropped-object near-miss (NM-2026-0337)** → **Investigation**
-**You do:** wait for the draft, edit a corrective action if you like, enter your name, click **Sign off & approve**.
-
-**Sentinel responds:** a full ICAM draft —
-- **Timeline** of the event, **absent/failed defences** (barricading not re-established; tools not tethered),
-- **causal factors** ranked, and **corrective actions** (e.g. *add re-barricading verification to permit close-out — owner L. Mokoena, High*).
-- On sign-off: banner turns green *"Signed off by <you> · <timestamp> · logged to audit"*, an audit entry is written, and the incident is pushed to Incident Intelligence.
-
----
-
-### Example 8 — Shift handover (HSE Officer): AI draft summary
-**Persona:** HSE Officer → **Shift Handover**
-**You do:** click **AI draft summary**.
-
-**Sentinel responds:** a professional handover narrative for the incoming supervisor — what was
-completed, equipment flagged (EX-204), carried-over corrective actions (CA-0912, CA-0913), and pending
-permits — with the completeness meter at 94%. Generate a branded PDF to "send to next shift."
-
----
-
-### Example 9 — Reports (HSE Manager): board-ready, AI-generated
-**Persona:** HSE Manager → **Reports** → click **Generate** on any of the three templates.
-
-**Sentinel responds:** a live-generated report (title, period, executive summary, 3–4 sections) tailored
-to the type:
-- **Monthly HSE Summary** — performance KPIs, the recurring Gamsberg pattern, the predictive flag, standards alignment.
-- **Incident Pack** — open investigations, ICAM causal themes, priority corrective actions.
-- **Compliance Status** — SOP currency, the flagged fall-protection-standard reviews, MHSA/ISO/ICMM alignment.
-
-Each renders as a branded, printable document with an "AI-generated" chip and the POPIA classification.
+The full set of runnable, persona-by-persona interactions lives in **[EXAMPLES.md](EXAMPLES.md)** —
+including working-at-heights and confined-space questions, the off-domain guardrail, near-miss
+classification, AI-suggested pre-task controls, the ICAM draft + sign-off, the officer→worker handover
+flow, live recurring-pattern analysis, AI-generated reports, the audit trail, and toggling an agent off.
 
 ---
 
@@ -298,7 +205,8 @@ Each renders as a branded, printable document with an "AI-generated" chip and th
 | **Guardrail line + off-domain refusal** | Ask Sentinel | the agent stays in the safety domain |
 | **Human-in-the-loop gate** | Investigation | nothing is finalised without an HSE owner's sign-off |
 | **Audit log** | Admin → Audit Log | every AI answer & sign-off logged with source, version, user, POPIA class |
-| **POPIA badge** | top bar + documents | data-governance posture is visible everywhere |
+| **POPIA classification** | Audit Log + generated reports / handover PDF | each record gets a server-side data-classification label (e.g. Internal C3 vs Confidential — personal C4) |
+| **Server-enforced agent toggles** | Admin → Settings | disabling an agent actually disables its endpoint, not just the UI |
 
 ---
 

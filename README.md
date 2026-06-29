@@ -13,9 +13,9 @@ H&S standards (MHSA 1996, OHSA, ISO 45001, ICMM Critical Control Management, MHS
 C176), with a **proactive / preventive** bias. If Azure isn't configured, the backend falls back to
 scripted responses so the demo never breaks.
 
-> 📘 **For a full feature-by-feature walkthrough** — what every tab does, how it maps to the
-> problem statement, and "you type → the AI responds" examples — see
-> **[FUNCTIONALITY.md](FUNCTIONALITY.md)**.
+> 📘 **For a full feature-by-feature walkthrough** — what every tab does and how it maps to the
+> problem statement — see **[FUNCTIONALITY.md](FUNCTIONALITY.md)**.
+> For runnable **"you type → the AI responds"** examples, see **[EXAMPLES.md](EXAMPLES.md)**.
 
 ```
 Sentinel/
